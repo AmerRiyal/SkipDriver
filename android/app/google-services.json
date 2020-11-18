@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "466630292665",
+    "firebase_url": "https://skipdriver-c6e91.firebaseio.com",
+    "project_id": "skipdriver-c6e91",
+    "storage_bucket": "skipdriver-c6e91.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:466630292665:android:d3fa34ed83b4a343809768",
+        "android_client_info": {
+          "package_name": "com.skipdriver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "466630292665-hmaoj774rkq9voaercd5esrkksk5ac33.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDV5lYmAiSHMgqVEcdj-GzdisApBZZ_ABk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "466630292665-hmaoj774rkq9voaercd5esrkksk5ac33.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
