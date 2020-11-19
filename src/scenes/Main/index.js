@@ -264,18 +264,27 @@ class Main extends Component {
       );
     } else {
       check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE).then((response) => {
+        alert(JSON.stringify(response));
+        if (response == 'blocked') {
+          Linking.openURL('app-settings://');
+        }
         if (response != 'granted') {
           Permissions.request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
             .then((value) => {
               if (value == 'granted') {
-                this.watchPosition();
+                this.setState({allowLocation: true}, () => {
+                  this.watchPosition();
+                });
               }
             })
             .catch((error) => {
+              Linking.openURL('app-settings://');
               this.handleRejectedLocation();
             });
         } else if (response == 'granted') {
-          this.watchPosition();
+          this.setState({allowLocation: true}, () => {
+            this.watchPosition();
+          });
         }
       });
     }

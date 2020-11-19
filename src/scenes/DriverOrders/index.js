@@ -6,6 +6,7 @@ import {
   FlatList,
   StyleSheet,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import {HeaderView} from '@molecules';
 import {AppIcon, LoadingView} from '@atoms';
@@ -13,6 +14,7 @@ import {AppStyles, Strings, Colors} from '@styles';
 import ks from '@services/KSAPI';
 import {connect} from 'react-redux';
 import moment from 'moment';
+import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 
 class DriverOrders extends Component {
   constructor(props) {
@@ -114,7 +116,11 @@ class DriverOrders extends Component {
 
   render() {
     return (
-      <View style={{flex: 1}}>
+      <View
+        style={{
+          flex: 1,
+          paddingTop: Platform.OS === 'ios' ? getStatusBarHeight() : 0,
+        }}>
         <HeaderView
           navigation={this.props.navigation}
           renderLeft={() => {
@@ -126,7 +132,7 @@ class DriverOrders extends Component {
                 <AppIcon
                   type={'SimpleLineIcons'}
                   name={'menu'}
-                  color={Colors.DarkTextColor}
+                  color={'#fff'}
                   size={25}
                 />
               </TouchableOpacity>
@@ -137,7 +143,7 @@ class DriverOrders extends Component {
               <Text
                 style={[
                   AppStyles.darkText,
-                  {color: Colors.primary, fontSize: 20},
+                  {color: '#fff', marginVertical: 0, fontSize: 20},
                 ]}>
                 {Strings.MyOrders}
               </Text>

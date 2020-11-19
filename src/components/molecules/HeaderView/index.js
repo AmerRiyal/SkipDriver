@@ -23,7 +23,7 @@ class HeaderView extends Component {
           styles.headerView,
           this.props.light
             ? {backgroundColor: '#fff'}
-            : {backgroundColor: '#F4F4F6'},
+            : {backgroundColor: Colors.DarkTextColor},
           this.props.extraStyle,
         ]}>
         {this.props.renderLeft()}

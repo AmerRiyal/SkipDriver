@@ -3,6 +3,7 @@ import {View, Text} from 'react-native';
 import {AppStyles, Strings, Colors, Sizes} from '@styles';
 import {MenuButton} from '@atoms';
 import {connect} from 'react-redux';
+import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 
 class Drawer extends Component {
   constructor(props) {
@@ -13,7 +14,12 @@ class Drawer extends Component {
   render() {
     const {user} = this.props;
     return (
-      <View style={{backgroundColor: '#17242D', flex: 1, paddingTop: 10}}>
+      <View
+        style={{
+          backgroundColor: '#17242D',
+          flex: 1,
+          paddingTop: 10 + getStatusBarHeight(),
+        }}>
         <View style={{alignItems: 'center', marginBottom: 20}}>
           <Text style={{color: '#fff', fontSize: 25}}>{user.Name}</Text>
           <Text style={{color: '#fff', fontSize: 21, marginVertical: 10}}>
