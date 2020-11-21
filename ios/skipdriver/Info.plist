@@ -2,6 +2,53 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>skipdriver</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>localhost</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>the app need access to camera so you can upload the required photos</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>to keep track of your location to receive orders</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>to keep track of your location to receive orders</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>to keep track of your location to receive orders</string>
+	<key>NSMotionUsageDescription</key>
+	<string>This app needs to be able to access your motion use to update your location</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>the app need access to your photos so you can upload the required photos</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>OpenSans-SemiBoldItalic.ttf</string>
@@ -29,51 +76,6 @@
 		<string>Entypo.ttf</string>
 		<string>AntDesign.ttf</string>
 	</array>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>en</string>
-	<key>CFBundleDisplayName</key>
-	<string>skipdriver</string>
-	<key>CFBundleExecutable</key>
-	<string>$(EXECUTABLE_NAME)</string>
-	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>$(PRODUCT_NAME)</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleVersion</key>
-	<string>1</string>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-		<key>NSExceptionDomains</key>
-		<dict>
-			<key>localhost</key>
-			<dict>
-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-			</dict>
-		</dict>
-	</dict>
-	<key>NSCameraUsageDescription</key>
-	<string>the app need access to camera so you can upload the required photos</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>to keep track of your location to receive orders</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>to keep track of your location to receive orders</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>to keep track of your location to receive orders</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>the app need access to your photos so you can upload the required photos</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

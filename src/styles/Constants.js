@@ -9,8 +9,6 @@ const {width, height} = Dimensions.get('window');
 const Constants = {
   RTL: false,
   Language: 'en', // Arabic
-  fontFamily: 'Cairo-Regular',
-  fontHeader: 'Cairo-Bold',
   SingleChoice: 1,
   CheckBox: 2,
   fontHeaderAndroid: 'Cairo-Regular',

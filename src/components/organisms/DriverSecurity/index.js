@@ -42,7 +42,6 @@ export default class DriverSecurity extends Component {
             activeSegmentBackgroundColor={Colors.primary}
             isRTL={I18nManager.isRTL}
             containerStyle={styles.segmentControl}
-            textStyle={{fontFamily: Constants.fontFamily}}
           />
           {this.state.userType === 0 ? (
             <AppTextInput

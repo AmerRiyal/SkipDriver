@@ -264,7 +264,6 @@ class Main extends Component {
       );
     } else {
       check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE).then((response) => {
-        alert(JSON.stringify(response));
         if (response == 'blocked') {
           Linking.openURL('app-settings://');
         }

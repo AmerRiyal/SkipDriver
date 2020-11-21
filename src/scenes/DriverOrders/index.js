@@ -71,8 +71,8 @@ class DriverOrders extends Component {
               justifyContent: 'space-between',
               alignItems: 'center',
             }}>
-            <Text style={styles.titleText}>{item.BranchName}</Text>
-            <Text style={styles.subTitle}>
+            <Text style={[styles.titleText, {flex: 1}]}>{item.BranchName}</Text>
+            <Text style={[styles.subTitle, {flex: 0.2}]}>
               {moment(item.OrderDate).format('h:mm a')}
             </Text>
           </View>

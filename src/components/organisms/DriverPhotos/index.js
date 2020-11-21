@@ -257,7 +257,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   photoTitle: {
-    fontFamily: Constants.fontFamily,
     fontSize: 18,
   },
   addButton: {
