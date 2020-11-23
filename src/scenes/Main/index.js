@@ -10,6 +10,7 @@ import {
   Linking,
   AppState,
   Alert,
+  Platform,
 } from 'react-native';
 import Permissions, {PERMISSIONS, check} from 'react-native-permissions';
 import Geolocation from 'react-native-geolocation-service';
@@ -265,7 +266,15 @@ class Main extends Component {
     } else {
       check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE).then((response) => {
         if (response == 'blocked') {
-          Linking.openURL('app-settings://');
+          Alert.alert(Strings.location, Strings.enableLocation, [
+            {
+              text: Strings.Ok,
+              onPress: () => {
+                Linking.openURL('app-settings://');
+              },
+            },
+            {text: Strings.Cancel, onPress: () => {}},
+          ]);
         }
         if (response != 'granted') {
           Permissions.request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
@@ -273,6 +282,7 @@ class Main extends Component {
               if (value == 'granted') {
                 this.setState({allowLocation: true}, () => {
                   this.watchPosition();
+                  this.activeBackgroundLocation();
                 });
               }
             })
@@ -283,6 +293,7 @@ class Main extends Component {
         } else if (response == 'granted') {
           this.setState({allowLocation: true}, () => {
             this.watchPosition();
+            this.activeBackgroundLocation();
           });
         }
       });
@@ -342,7 +353,9 @@ class Main extends Component {
     firstTime = true;
     AppState.addEventListener('change', this._handleAppStateChange);
     this.checkPermission();
-    this.activeBackgroundLocation();
+    if (Platform.OS === 'android') {
+      this.activeBackgroundLocation();
+    }
     if (this.props.hasOrder) {
       let order = await this.getUpdatedOrderStatus();
       if (order && order.result && order !== Constants.orderStatus.Cancelled) {
@@ -465,24 +478,26 @@ class Main extends Component {
 
   onLocation = (location) => {
     let loc = {};
-    loc.latitude = location.coords.latitude;
-    loc.longitude = location.coords.longitude;
-    loc.latitudeDelta = 0.009;
-    loc.longitudeDelta = 0.009;
-    this.setState({
-      driverLocation: loc,
-    });
+    if (location != null && location != undefined) {
+      loc.latitude = location?.coords?.latitude;
+      loc.longitude = location?.coords?.longitude;
+      loc.latitudeDelta = 0.009;
+      loc.longitudeDelta = 0.009;
+      this.setState({
+        driverLocation: loc,
+      });
+    }
   };
 
   handleGetDirections = () => {
     const data = {
       source: {
-        latitude: this.state.driverLocation.latitude,
-        longitude: this.state.driverLocation.longitude,
+        latitude: this.state.driverLocation?.latitude,
+        longitude: this.state.driverLocation?.longitude,
       },
       destination: {
-        latitude: this.state.markerPosition.latitude,
-        longitude: this.state.markerPosition.longitude,
+        latitude: this.state.markerPosition?.latitude,
+        longitude: this.state.markerPosition?.longitude,
       },
       params: [
         {

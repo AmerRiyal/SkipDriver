@@ -209,6 +209,8 @@ let Strings = new LocalizedStrings({
     TotalRejected: 'Total\nRejected',
     TotalAccepted: 'Total\nAccepted',
     TotalOrders: 'Total\nOrders',
+    Ok: 'Ok',
+    Cancel: 'Cancel',
   },
   ar: {
     langID: '2',
@@ -410,6 +412,8 @@ let Strings = new LocalizedStrings({
     TotalOrders: 'مجموع\nالطلبات',
     Earning: 'الكسب',
     TotalEarning: 'مجموع الأرباح',
+    Ok: 'نعم',
+    Cancel: 'لا',
   },
 });
 export default Strings;
