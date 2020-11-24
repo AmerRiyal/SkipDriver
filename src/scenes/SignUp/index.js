@@ -64,6 +64,7 @@ class SignUp extends Component {
         userPhone: null,
         password: null,
         dob: null,
+        Iban: null,
       },
     };
   }
@@ -81,6 +82,7 @@ class SignUp extends Component {
       this.state.userType === 0
         ? this.state.numCitizen
         : this.state.numResident;
+    driver.Iban = this.state.user.Iban;
     KS.RegisterDrive({
       user: this.state.user,
       driver: driver,

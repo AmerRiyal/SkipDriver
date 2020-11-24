@@ -211,6 +211,8 @@ let Strings = new LocalizedStrings({
     TotalOrders: 'Total\nOrders',
     Ok: 'Ok',
     Cancel: 'Cancel',
+    Iban: 'IBAN(must be 30 characters)',
+    WrongIban: 'the Iban number is not correct',
   },
   ar: {
     langID: '2',
@@ -414,6 +416,8 @@ let Strings = new LocalizedStrings({
     TotalEarning: 'مجموع الأرباح',
     Ok: 'نعم',
     Cancel: 'لا',
+    Iban: 'IBAN(يجب أن يتكون من 30 حرفا)',
+    WrongIban: 'the Iban number is not correct',
   },
 });
 export default Strings;

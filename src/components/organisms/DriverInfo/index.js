@@ -21,6 +21,7 @@ export default class DriverInfo extends Component {
       driverEmail: this.props.driver.email,
       driverPhone: this.props.driver.userPhone,
       password: this.props.driver.password,
+      Iban: this.props.driver.Iban,
       ShowDate: false,
       DriverDob:
         this.props.driver.dob != null ? this.props.driver.dob : new Date(),
@@ -43,6 +44,7 @@ export default class DriverInfo extends Component {
         this.state.driverPhone,
         this.state.password,
         this.state.DriverDob,
+        this.state.Iban,
       )
     ) {
       return Strings.CompleteForm;
@@ -54,6 +56,8 @@ export default class DriverInfo extends Component {
       return Strings.InvalidPhone;
     } else if (!Validate.isPassword(this.state.password)) {
       return Strings.InvalidPassword;
+    } else if (this.state.Iban.length < 30) {
+      return Strings.WrongIban;
     }
     return undefined;
   }
@@ -102,6 +106,17 @@ export default class DriverInfo extends Component {
             }}
             value={this.state.password}
           />
+          <AppTextInput
+            containPhone={false}
+            secureTextEntry={true}
+            placeholder={Strings.Iban}
+            keyboardType={'default'}
+            onChangeText={(text) => {
+              this.setState({Iban: text});
+            }}
+            value={this.state.Iban}
+          />
+
           <TouchableOpacity
             style={styles.timeBut}
             onPress={() => {
