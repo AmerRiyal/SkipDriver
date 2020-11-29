@@ -43,7 +43,7 @@ class Login extends Component {
     FCM.requestPermission();
     // gets the device's push token
     FCM.getToken().then((token) => {
-      console.log(JSON.stringify(token));
+      alert(JSON.stringify(token));
       KS.SetUserToken({
         userid: ID,
         token: token,

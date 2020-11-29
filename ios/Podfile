@@ -18,6 +18,7 @@ target 'skipdriver' do
     pod 'Google-Maps-iOS-Utils'
     pod 'Firebase/Core', '~> 6.34.0'
     pod 'Firebase/Messaging', '~> 6.34.0'
+    pod 'RNFirebase', :path => '../node_modules/react-native-firebase/ios'
     pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
     
   target 'skipdriverTests' do
