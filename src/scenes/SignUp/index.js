@@ -87,7 +87,6 @@ class SignUp extends Component {
       user: this.state.user,
       driver: driver,
     }).then((data) => {
-      console.log(JSON.stringify());
       this.setState({loading: false});
       if (data.result) {
         this.state.DriverPhotos.map((img, index) => {

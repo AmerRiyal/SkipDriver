@@ -108,7 +108,6 @@ export default class DriverInfo extends Component {
           />
           <AppTextInput
             containPhone={false}
-            secureTextEntry={true}
             placeholder={Strings.Iban}
             keyboardType={'default'}
             onChangeText={(text) => {
@@ -166,6 +165,7 @@ export default class DriverInfo extends Component {
               driverInfo.userPhone = this.state.driverPhone;
               driverInfo.password = this.state.password;
               driverInfo.dob = this.state.DriverDob;
+              driverInfo.Iban = this.state.Iban;
               this.props.changePage(driverInfo, 0);
             }}
           />
@@ -187,6 +187,7 @@ export default class DriverInfo extends Component {
                 driverInfo.userPhone = this.state.driverPhone;
                 driverInfo.password = this.state.password;
                 driverInfo.dob = this.state.DriverDob;
+                driverInfo.Iban = this.state.Iban;
                 this.props.changePage(driverInfo, 2);
               }
             }}

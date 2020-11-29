@@ -28,9 +28,9 @@ export default class DriverPhotos extends Component {
   openPicker = (photoType) => {
     ImagePicker.openPicker({
       width: 370,
+      mediaType: 'photo',
       height: 370,
-      cropping: false,
-      includeExif: true,
+      cropping: true,
       includeBase64: true,
       compressImageMaxWidth: 640,
       compressImageMaxHeight: 480,
