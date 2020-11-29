@@ -87,77 +87,81 @@ export default class DriverPhotos extends Component {
           {Strings.DriverPhotos}
         </Text>
         <ScrollView style={{flex: 1}}>
-          <TouchableOpacity
-            style={styles.photoView}
-            onPress={async () => {
-              //this.openPicker(1);
-              this.setState({SelectImage: true, photoNum: 1});
-            }}>
+          <View style={styles.photoView}>
             <Text style={styles.photoTitle}>{Strings.licensePhoto}</Text>
-            <Image
-              source={
-                !this.state.licensePhoto
-                  ? require('@Images/frameImage.png')
-                  : {
-                      uri: this.state.licensePhoto?.path,
-                    }
-              }
-              style={{width: 100, height: 100, marginVertical: 25}}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.photoView}
-            onPress={() => {
-              //this.openPicker(2);
-              this.setState({SelectImage: true, photoNum: 2});
-            }}>
+            <TouchableOpacity
+              onPress={async () => {
+                //this.openPicker(1);
+                this.setState({SelectImage: true, photoNum: 1});
+              }}>
+              <Image
+                source={
+                  !this.state.licensePhoto
+                    ? require('@Images/frameImage.png')
+                    : {
+                        uri: this.state.licensePhoto?.path,
+                      }
+                }
+                style={{width: 100, height: 100, marginVertical: 25}}
+              />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.photoView}>
             <Text style={styles.photoTitle}>{Strings.formPhoto}</Text>
-            <Image
-              source={
-                !this.state.formPhoto
-                  ? require('@Images/frameImage.png')
-                  : {
-                      uri: this.state.formPhoto?.path,
-                    }
-              }
-              style={{width: 100, height: 100, marginVertical: 25}}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.photoView}
-            onPress={() => {
-              //this.openPicker(3);
-              this.setState({SelectImage: true, photoNum: 3});
-            }}>
+            <TouchableOpacity
+              onPress={() => {
+                //this.openPicker(2);
+                this.setState({SelectImage: true, photoNum: 2});
+              }}>
+              <Image
+                source={
+                  !this.state.formPhoto
+                    ? require('@Images/frameImage.png')
+                    : {
+                        uri: this.state.formPhoto?.path,
+                      }
+                }
+                style={{width: 100, height: 100, marginVertical: 25}}
+              />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.photoView}>
             <Text style={styles.photoTitle}>{Strings.inCarPhoto}</Text>
-            <Image
-              source={
-                !this.state.inCarPhoto
-                  ? require('@Images/frameImage.png')
-                  : {
-                      uri: this.state.inCarPhoto?.path,
-                    }
-              }
-              style={{width: 100, height: 100, marginVertical: 25}}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.photoView}
-            onPress={() => {
-              this.setState({SelectImage: true, photoNum: 4});
-            }}>
+            <TouchableOpacity
+              onPress={() => {
+                //this.openPicker(3);
+                this.setState({SelectImage: true, photoNum: 3});
+              }}>
+              <Image
+                source={
+                  !this.state.inCarPhoto
+                    ? require('@Images/frameImage.png')
+                    : {
+                        uri: this.state.inCarPhoto?.path,
+                      }
+                }
+                style={{width: 100, height: 100, marginVertical: 25}}
+              />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.photoView}>
             <Text style={styles.photoTitle}>{Strings.outCarPhoto}</Text>
-            <Image
-              source={
-                !this.state.outCarPhoto
-                  ? require('@Images/frameImage.png')
-                  : {
-                      uri: this.state.outCarPhoto?.path,
-                    }
-              }
-              style={{width: 100, height: 100, marginVertical: 25}}
-            />
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                this.setState({SelectImage: true, photoNum: 4});
+              }}>
+              <Image
+                source={
+                  !this.state.outCarPhoto
+                    ? require('@Images/frameImage.png')
+                    : {
+                        uri: this.state.outCarPhoto?.path,
+                      }
+                }
+                style={{width: 100, height: 100, marginVertical: 25}}
+              />
+            </TouchableOpacity>
+          </View>
           <View
             style={{
               flexDirection: 'row',
