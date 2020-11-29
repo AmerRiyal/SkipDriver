@@ -150,7 +150,7 @@ class Main extends Component {
     _this.notificationOpenedListener = firebase
       .notifications()
       .onNotificationOpened((notificationOpen) => {
-        if (notificationOpen && this.state.allowNewRequests) {
+        if (notificationOpen.data && this.state.allowNewRequests) {
           //  alert(notificationOpen);
           if (notificationOpen.notification) {
             this.handleServiceNotification(
@@ -229,7 +229,6 @@ class Main extends Component {
         });
       },
       (error) => {
-        alert(error);
         this.handleRejectedLocation();
       },
       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
@@ -314,7 +313,7 @@ class Main extends Component {
         // Activity Recognition
         stopTimeout: 1,
         // Application config
-        debug: true, // <-- enable this hear sounds for background-geolocation life-cycle.
+        debug: false, // <-- enable this hear sounds for background-geolocation life-cycle.
         logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE,
         stopOnTerminate: false, // <-- Allow the background-service to continue tracking when user closes the app.
         startOnBoot: true, // <-- Auto start tracking when device is powered-up.
@@ -452,6 +451,7 @@ class Main extends Component {
 
   changeDriverStatus = () => {
     if (this.state.active) {
+      this.activeBackgroundLocation();
       this.updateProviderInfo();
       BackgroundTimer.runBackgroundTimer(async () => {
         //code that will be called every 10 seconds
@@ -471,7 +471,7 @@ class Main extends Component {
     } else {
       console.log('l3');
       BackgroundTimer.stopBackgroundTimer();
-
+      BackgroundGeolocation.removeListeners();
       this.updateProviderInfo();
     }
   };

@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Alert,
   ScrollView,
+  Platform,
 } from 'react-native';
 import {DriverInfo, DriverSecurity, DriverPhotos} from '@organisms';
 import StepIndicator from 'react-native-step-indicator';
@@ -17,6 +18,7 @@ import KS from '@services/KSAPI';
 import Toast from 'react-native-simple-toast';
 import {connect} from 'react-redux';
 import Swiper from 'react-native-swiper';
+import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 
 //const labels = ["Cart","Delivery Address","Order Summary"];
 const customStyles = {
@@ -87,7 +89,6 @@ class SignUp extends Component {
       user: this.state.user,
       driver: driver,
     }).then((data) => {
-      console.log(JSON.stringify());
       this.setState({loading: false});
       if (data.result) {
         this.state.DriverPhotos.map((img, index) => {
@@ -167,7 +168,11 @@ class SignUp extends Component {
   render() {
     const {labels} = this.state;
     return (
-      <View style={AppStyles.fullScreenView}>
+      <View
+        style={[
+          AppStyles.fullScreenView,
+          Platform.OS === 'ios' ? {paddingTop: getStatusBarHeight()} : {},
+        ]}>
         <TouchableOpacity
           style={AppStyles.backButton}
           onPress={() => {
