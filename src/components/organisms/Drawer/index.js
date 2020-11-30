@@ -4,6 +4,7 @@ import {AppStyles, Strings, Colors, Sizes} from '@styles';
 import {MenuButton} from '@atoms';
 import {connect} from 'react-redux';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
+import ks from '@services/KSAPI';
 
 class Drawer extends Component {
   constructor(props) {
@@ -21,11 +22,11 @@ class Drawer extends Component {
           paddingTop: 10 + getStatusBarHeight(),
         }}>
         <View style={{alignItems: 'center', marginBottom: 20}}>
-          <Text style={{color: '#fff', fontSize: 25}}>{user.Name}</Text>
+          <Text style={{color: '#fff', fontSize: 25}}>{user?.Name}</Text>
           <Text style={{color: '#fff', fontSize: 21, marginVertical: 10}}>
-            {user.Email}
+            {user?.Email}
           </Text>
-          <Text style={{color: '#fff', fontSize: 21}}>{user.Phone}</Text>
+          <Text style={{color: '#fff', fontSize: 21}}>{user?.Phone}</Text>
         </View>
         <MenuButton
           onPress={() => {
@@ -59,13 +60,14 @@ class Drawer extends Component {
             onPress={() => {
               this.props.ChangeDriverStatus(false, () => {
                 ks.ProviderActive({
-                  providerid: this.props.user.ID,
+                  providerid: this.props.user?.ID,
                   active: false,
                   lat: 21.4858,
                   lng: 21.4858,
+                }).then((data) => {
+                  this.props.Logout();
+                  this.props.navigation.navigate('Auth');
                 });
-                this.props.Logout();
-                this.props.navigation.navigate('Auth');
               });
             }}
           />
