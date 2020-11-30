@@ -9,6 +9,7 @@ import {
   Alert,
   ScrollView,
   Platform,
+  I18nManager,
 } from 'react-native';
 import {DriverInfo, DriverSecurity, DriverPhotos} from '@organisms';
 import StepIndicator from 'react-native-step-indicator';
@@ -180,7 +181,7 @@ class SignUp extends Component {
           }}>
           <AppIcon
             type={'AntDesign'}
-            name={'left'}
+            name={I18nManager.isRTL ? 'right' : 'left'}
             color={Colors.DarkTextColor}
             size={25}
           />

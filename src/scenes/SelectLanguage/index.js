@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  I18nManager,
 } from 'react-native';
 import {AppLogo} from '@atoms';
 import {AppStyles, Images, Strings, Colors, Constants} from '@styles';
@@ -31,6 +32,7 @@ export default class SelectLanguage extends Component {
             onPress={async () => {
               Strings.setLanguage('en');
               AsyncStorage.setItem('language', 'en', () => {
+                I18nManager.forceRTL(false);
                 RNRestart.Restart();
               });
             }}>
@@ -41,6 +43,7 @@ export default class SelectLanguage extends Component {
             onPress={async () => {
               Strings.setLanguage('ar');
               AsyncStorage.setItem('language', 'ar', () => {
+                I18nManager.forceRTL(true);
                 RNRestart.Restart();
               });
             }}>

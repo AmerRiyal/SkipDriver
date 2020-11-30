@@ -43,7 +43,7 @@ class Main extends Component {
       allowNewRequests: true,
       hasOrder: false,
       firstTime: true,
-      active: false,
+      active: this.props.isActive,
       allowLocation: false,
       markerShown: false,
     };
@@ -195,7 +195,7 @@ class Main extends Component {
         langID: Strings.langID,
       }).then((data) => {
         if (data.result) {
-          this.setState({active: data.driver.isActive}, () => {
+          this.props.ChangeDriverStatus(data.driver.isActive, () => {
             this.changeDriverStatus();
           });
         }
@@ -439,10 +439,9 @@ class Main extends Component {
     return orderStatus;
   };
   updateProviderInfo = async () => {
-    alert(this.state.active);
     let data = await ks.ProviderActive({
       providerid: this.props.user.ID,
-      active: this.state.active,
+      active: this.props.isActive,
       lat: this.state.driverLocation.latitude,
       lng: this.state.driverLocation.longitude,
     });
@@ -450,7 +449,7 @@ class Main extends Component {
   };
 
   changeDriverStatus = () => {
-    if (this.state.active) {
+    if (this.props.isActive) {
       this.activeBackgroundLocation();
       this.updateProviderInfo();
       BackgroundTimer.runBackgroundTimer(async () => {
@@ -464,12 +463,18 @@ class Main extends Component {
           if (order && order.result) {
             this.props.UpdateOrderStatus(order.status);
           }
+        } else if (!this.props.isActive) {
+          BackgroundTimer.stopBackgroundTimer();
+          BackgroundGeolocation.removeListeners();
+          this.updateProviderInfo();
         } else {
           this.updateProviderInfo();
         }
       }, 5000);
     } else {
       console.log('l3');
+      BackgroundTimer.stopBackgroundTimer();
+      BackgroundGeolocation.removeListeners();
       BackgroundTimer.stopBackgroundTimer();
       BackgroundGeolocation.removeListeners();
       this.updateProviderInfo();
@@ -608,7 +613,7 @@ class Main extends Component {
                 ButtonText={Strings.Support}
                 ButtonColor={'#990000'}
                 onPress={() => {
-                  alert('fefef');
+                  Linking.openURL(`tel:${966583739502}`);
                 }}
               />
             </View>
@@ -722,7 +727,7 @@ class Main extends Component {
                 ButtonText={Strings.Support}
                 ButtonColor={'#990000'}
                 onPress={() => {
-                  alert('fefef');
+                  Linking.openURL(`tel:${966583739502}`);
                 }}
               />
             </View>
@@ -743,12 +748,12 @@ class Main extends Component {
             zIndex: 1,
           }}
           ButtonText={
-            this.state.active ? Strings.becomeInActive : Strings.becomeActive
+            this.props.isActive ? Strings.becomeInActive : Strings.becomeActive
           }
-          ButtonColor={this.state.active ? 'gray' : Colors.primary}
+          ButtonColor={this.props.isActive ? 'gray' : Colors.primary}
           onPress={() => {
             if (this.state.allowLocation) {
-              this.setState({active: !this.state.active}, () => {
+              this.props.ChangeDriverStatus(!this.props.isActive, () => {
                 this.changeDriverStatus();
               });
             } else {
@@ -1034,10 +1039,12 @@ const mapStateToProps = ({UserReducer, OrderReducer}) => {
     order: OrderReducer.order,
     hasOrder: OrderReducer.hasOrder,
     orderStatus: OrderReducer.orderStatus,
+    isActive: UserReducer.isActive,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
+  const {actions} = require('@redux/UserReducer');
   const orderActions = require('@redux/OrderReducer');
 
   return {
@@ -1049,6 +1056,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     RemoveOrder: () => {
       orderActions.actions.RemoveOrder(dispatch);
+    },
+    ChangeDriverStatus: (isActive, callback) => {
+      actions.ChangeDriverStatus(dispatch, isActive, callback);
     },
   };
 };

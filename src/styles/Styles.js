@@ -1,6 +1,7 @@
 import {StyleSheet, Dimensions} from 'react-native';
 import Colors from './Colors';
 import Sizes from './Sizes';
+import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 
 const AppStyles = StyleSheet.create({
   ButtonStyle: {
@@ -103,7 +104,7 @@ const AppStyles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    top: 20,
+    top: 20 + getStatusBarHeight(),
     left: 20,
   },
   headerView: {

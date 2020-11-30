@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Image,
   Dimensions,
+  I18nManager,
 } from 'react-native';
 import {AppStyles, Strings, Colors, Constants, Validate} from '@styles';
 import {AppTextInput, AppButton, AppIcon, AppLogo, LoadingView} from '@atoms';
@@ -43,7 +44,6 @@ class Login extends Component {
     FCM.requestPermission();
     // gets the device's push token
     FCM.getToken().then((token) => {
-      alert(JSON.stringify(token));
       KS.SetUserToken({
         userid: ID,
         token: token,
@@ -96,7 +96,7 @@ class Login extends Component {
           }}>
           <AppIcon
             type={'AntDesign'}
-            name={'left'}
+            name={I18nManager.isRTL ? 'right' : 'left'}
             color={Colors.DarkTextColor}
             size={25}
           />

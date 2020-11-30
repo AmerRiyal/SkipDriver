@@ -51,7 +51,7 @@ export default class AppTextInput extends Component {
         style={[
           styles.TextInputMainStyle,
           this.props.ExtraStyle,
-          {textAlign: 'left'},
+          I18nManager.isRTL ? {textAlign: 'right'} : {textAlign: 'left'},
         ]}
         placeholder={this.props.placeholder}
         placeholderTextColor={

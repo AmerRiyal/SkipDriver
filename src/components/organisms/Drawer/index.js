@@ -57,8 +57,16 @@ class Drawer extends Component {
             IconName={'logout'}
             Title={Strings.Logout}
             onPress={() => {
-              this.props.Logout();
-              this.props.navigation.navigate('Auth');
+              this.props.ChangeDriverStatus(false, () => {
+                ks.ProviderActive({
+                  providerid: this.props.user.ID,
+                  active: false,
+                  lat: 21.4858,
+                  lng: 21.4858,
+                });
+                this.props.Logout();
+                this.props.navigation.navigate('Auth');
+              });
             }}
           />
         )}
@@ -73,6 +81,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     Logout: () => {
       actions.Login(dispatch);
+    },
+    ChangeDriverStatus: (isActive, callback) => {
+      actions.ChangeDriverStatus(dispatch, isActive, callback);
     },
   };
 };
