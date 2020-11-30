@@ -763,6 +763,13 @@ class Main extends Component {
   render() {
     return (
       <View style={{flex: 1}}>
+        <TouchableOpacity
+          style={styles.Menu}
+          onPress={() => {
+            this.props.navigation.toggleDrawer();
+          }}>
+          <AppIcon type={'Feather'} name={'menu'} size={30} color={'#000'} />
+        </TouchableOpacity>
         <MapView
           ref={'map'}
           initialRegion={this.state.driverLocation}
@@ -860,13 +867,6 @@ class Main extends Component {
             </View>
           </View>
         </ModalBox>
-        <TouchableOpacity
-          style={styles.Menu}
-          onPress={() => {
-            this.props.navigation.toggleDrawer();
-          }}>
-          <AppIcon type={'Feather'} name={'menu'} size={30} color={'#000'} />
-        </TouchableOpacity>
       </View>
     );
   }
