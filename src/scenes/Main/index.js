@@ -16,7 +16,8 @@ import Permissions, {PERMISSIONS, check} from 'react-native-permissions';
 import Geolocation from 'react-native-geolocation-service';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import {connect} from 'react-redux';
-import {AppStyles, Images, Strings, Colors, Constants} from '@styles';
+import {AppStyles, Images, Strings, Colors} from '@styles';
+import Constants from '../../styles/Constants';
 import {AppButton, AppLogo, AppIcon} from '@atoms';
 import ks from '@services/KSAPI';
 import BackgroundTimer from 'react-native-background-timer';
@@ -64,7 +65,9 @@ class Main extends Component {
     )
       .then((responseJson) => responseJson.json())
       .then((response) => {
-        let time = Math.ceil(response.rows[0].elements[0].duration.value / 60);
+        let time = 15;
+        if (response.rows[0].elements[0].status !== 'ZERO_RESULTS')
+          time = Math.ceil(response.rows[0].elements[0].duration.value / 60);
         if (response.status == 'OK') {
           ks.ProviderAcceptRequest({
             ProviderID: this.props.user.ID,
@@ -356,11 +359,13 @@ class Main extends Component {
     this.checkPermission();
     if (this.props.hasOrder) {
       let order = await this.getUpdatedOrderStatus();
-      if (order && order.result && order !== Constants.orderStatus.Cancelled) {
-        this.setState({
-          hasOrder: true,
-          orderStatus: order.status,
-          active: true,
+      if (order && order.result && order !== Constants.OrderStatus.Cancelled) {
+        this.props.ChangeDriverStatus(true, () => {
+          this.setState({
+            hasOrder: true,
+            orderStatus: order.status,
+            active: true,
+          });
         });
         this.props.UpdateOrderStatus(order.status);
         this.changeDriverStatus();
@@ -406,6 +411,8 @@ class Main extends Component {
             1000,
           );
         }
+      } else {
+        this.props.RemoveOrder();
       }
     }
   };
@@ -453,9 +460,13 @@ class Main extends Component {
       this.activeBackgroundLocation();
       this.updateProviderInfo();
       BackgroundTimer.runBackgroundTimer(async () => {
+        if (!this.props.isActive && !this.state.hasOrder) {
+          BackgroundTimer.stopBackgroundTimer();
+          BackgroundGeolocation.removeListeners();
+        }
+        console.log();
         //code that will be called every 10 seconds
         if (this.state.hasOrder && this.props.order) {
-          console.log(this.state.hasOrder && this.props.order);
           let [provider, order] = await Promise.all([
             this.updateProviderInfo(),
             this.getUpdatedOrderStatus(),
@@ -466,15 +477,12 @@ class Main extends Component {
         } else if (!this.props.isActive) {
           BackgroundTimer.stopBackgroundTimer();
           BackgroundGeolocation.removeListeners();
-          this.updateProviderInfo();
         } else {
           this.updateProviderInfo();
         }
-      }, 5000);
+      }, 10000);
     } else {
       console.log('l3');
-      BackgroundTimer.stopBackgroundTimer();
-      BackgroundGeolocation.removeListeners();
       BackgroundTimer.stopBackgroundTimer();
       BackgroundGeolocation.removeListeners();
       this.updateProviderInfo();
@@ -768,13 +776,6 @@ class Main extends Component {
   render() {
     return (
       <View style={{flex: 1}}>
-        <TouchableOpacity
-          style={styles.Menu}
-          onPress={() => {
-            this.props.navigation.toggleDrawer();
-          }}>
-          <AppIcon type={'Feather'} name={'menu'} size={30} color={'#000'} />
-        </TouchableOpacity>
         <MapView
           ref={'map'}
           initialRegion={this.state.driverLocation}
@@ -872,6 +873,13 @@ class Main extends Component {
             </View>
           </View>
         </ModalBox>
+        <TouchableOpacity
+          style={styles.Menu}
+          onPress={() => {
+            this.props.navigation.toggleDrawer();
+          }}>
+          <AppIcon type={'Feather'} name={'menu'} size={30} color={'#000'} />
+        </TouchableOpacity>
       </View>
     );
   }
