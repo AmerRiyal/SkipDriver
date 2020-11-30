@@ -245,6 +245,7 @@ class Main extends Component {
                 if (value == 'granted') {
                   this.setState({allowLocation: true}, () => {
                     this.watchPosition();
+                    this.activeBackgroundLocation();
                   });
                 } else {
                   this.handleRejectedLocation();
@@ -256,6 +257,7 @@ class Main extends Component {
           } else if (response == 'granted') {
             this.setState({allowLocation: true}, () => {
               this.watchPosition();
+              this.activeBackgroundLocation();
             });
           } else {
             this.handleRejectedLocation();
@@ -352,9 +354,6 @@ class Main extends Component {
     firstTime = true;
     AppState.addEventListener('change', this._handleAppStateChange);
     this.checkPermission();
-    if (Platform.OS === 'android') {
-      this.activeBackgroundLocation();
-    }
     if (this.props.hasOrder) {
       let order = await this.getUpdatedOrderStatus();
       if (order && order.result && order !== Constants.orderStatus.Cancelled) {
@@ -440,6 +439,7 @@ class Main extends Component {
     return orderStatus;
   };
   updateProviderInfo = async () => {
+    alert(this.state.active);
     let data = await ks.ProviderActive({
       providerid: this.props.user.ID,
       active: this.state.active,
