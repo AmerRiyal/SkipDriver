@@ -438,6 +438,7 @@ class Main extends Component {
     try {
       orderStatus = await ks.getOrderStatus({
         orderID: this.props.order?.OrderID,
+        DriverID: this.porps.user.ID,
       });
     } catch (error) {
       orderStatus = null;
