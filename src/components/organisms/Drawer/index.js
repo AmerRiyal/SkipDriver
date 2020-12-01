@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, Linking} from 'react-native';
 import {AppStyles, Strings, Colors, Sizes} from '@styles';
 import {MenuButton} from '@atoms';
 import {connect} from 'react-redux';
@@ -43,6 +43,14 @@ class Drawer extends Component {
           IconType={'Feather'}
           IconName={'user'}
           Title={Strings.Profile}
+        />
+        <MenuButton
+          IconType={'AntDesign'}
+          IconName={'infocirlceo'}
+          Title={Strings.Support}
+          onPress={() => {
+            Linking.openURL(`tel:${966583739502}`);
+          }}
         />
         <MenuButton
           IconType={'Fontisto'}
