@@ -203,6 +203,36 @@ KensoftApi.prototype.GetPagedBranches = function (data) {
   });
 };
 
+KensoftApi.prototype.UpdateUserInfo = function (data) {
+  var requestUrl = '';
+  if (data) {
+    requestUrl = this.join(data, '&');
+  } else {
+    requestUrl = 'parent=0';
+  }
+
+  var requestUrl = this.url + '/services/UpdateUserInfo?' + requestUrl;
+
+  return this._request(requestUrl).then(function (data) {
+    return data;
+  });
+};
+
+KensoftApi.prototype.UpdateDriverInfo = function (data) {
+  var requestUrl = '';
+  if (data) {
+    requestUrl = this.join(data, '&');
+  } else {
+    requestUrl = 'parent=0';
+  }
+
+  var requestUrl = this.url + '/services/UpdateDriverInfo?' + requestUrl;
+
+  return this._request(requestUrl).then(function (data) {
+    return data;
+  });
+};
+
 KensoftApi.prototype.GetProductsByVendorID = function (data) {
   var requestUrl = '';
   if (data) {

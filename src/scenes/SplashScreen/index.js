@@ -17,6 +17,7 @@ class SplashScreen extends Component {
 
   prepareData = async () => {
     const value = await AsyncStorage.getItem('language');
+    console.log(value);
     if (value != undefined) {
       Strings.setLanguage(value);
       if (this.props.user && this.props.user.ID) {

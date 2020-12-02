@@ -97,6 +97,7 @@ let Strings = new LocalizedStrings({
     to: 'to',
     location: 'location',
     Confirmation: 'Confirmation Message',
+    changeLang: 'are you sure you want to change the Language ?',
     VendorEnName: 'Vendor English Name',
     VendorArName: 'Vendor Arabic Name',
     VendorEmail: 'Vendor Email',
@@ -214,6 +215,8 @@ let Strings = new LocalizedStrings({
     Iban: 'IBAN(must be 30 characters)',
     WrongIban: 'the Iban number is not correct',
     Support: 'Support',
+    Settings: 'Settings',
+    SelectLanguage: 'Select Your Language',
   },
   ar: {
     langID: '2',
@@ -321,6 +324,7 @@ let Strings = new LocalizedStrings({
     AddToMenu: 'اضافة إلى القائمة',
     Next: 'التالي',
     Back: 'رجوع',
+    changeLang: 'هل أنت متأكد أنك تريد تغيير اللغة ?',
     selectCat: 'يرجى تحديد فئة العنصر',
     youNeedSelect: 'عليك تحديد الفئة',
     FillData: 'يرجى ملء بيانات المنتج',
@@ -362,6 +366,7 @@ let Strings = new LocalizedStrings({
     productSpecs: 'اضافة خصائص المنتج',
     SpecInfo: 'معلومات الخاصية',
     Rank: 'الترتيب',
+    MyOrders: 'طلباتي',
     SpecOptions: 'خيارات',
     AddSpec: 'اضافة خاصية',
     AddMore: 'اضافة المزيد',
@@ -420,6 +425,8 @@ let Strings = new LocalizedStrings({
     Cancel: 'لا',
     Iban: 'IBAN(يجب أن يتكون من 30 حرفا)',
     WrongIban: 'the Iban number is not correct',
+    Settings: 'الإعدادت',
+    SelectLanguage: 'قم بختيار اللغة',
   },
 });
 export default Strings;

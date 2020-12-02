@@ -12,7 +12,7 @@ import MainScreen from '@scenes/Main';
 import SelectLanguage from '@scenes/SelectLanguage';
 import ProfileScreen from '@scenes/Profile';
 import DriverOrders from '@scenes/DriverOrders';
-
+import Settings from '@scenes/Settings';
 import {Drawer} from '@organisms';
 
 const MyDrawerNavigator = createDrawerNavigator(
@@ -25,6 +25,9 @@ const MyDrawerNavigator = createDrawerNavigator(
     },
     ProfileScreen: {
       screen: ProfileScreen,
+    },
+    Settings: {
+      screen: Settings,
     },
   },
   {

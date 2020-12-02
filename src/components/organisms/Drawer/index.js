@@ -60,6 +60,14 @@ class Drawer extends Component {
             this.props.navigation.navigate('DriverOrders');
           }}
         />
+        <MenuButton
+          IconType={'Fontisto'}
+          IconName={'player-settings'}
+          Title={Strings.Settings}
+          onPress={() => {
+            this.props.navigation.navigate('Settings');
+          }}
+        />
         {user && (
           <MenuButton
             IconType={'SimpleLineIcons'}
