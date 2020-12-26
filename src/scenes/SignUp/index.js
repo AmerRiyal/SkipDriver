@@ -91,6 +91,7 @@ class SignUp extends Component {
       driver: driver,
     }).then((data) => {
       this.setState({loading: false});
+      console.log(JSON.stringify(data));
       if (data.result) {
         this.state.DriverPhotos.map((img, index) => {
           KS.DriverPhotoAdd({
