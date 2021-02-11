@@ -361,6 +361,8 @@ PODS:
     - React-Core
   - react-native-maps (0.27.1):
     - React
+  - react-native-netinfo (5.9.10):
+    - React-Core
   - react-native-restart (0.0.17):
     - React
   - react-native-simple-toast (1.1.2):
@@ -452,12 +454,12 @@ PODS:
     - React
   - RNGestureHandler (1.8.0):
     - React
-  - RNImageCropPicker (0.31.1):
+  - RNImageCropPicker (0.35.1):
     - React-Core
     - React-RCTImage
-    - RNImageCropPicker/QBImagePickerController (= 0.31.1)
+    - RNImageCropPicker/QBImagePickerController (= 0.35.1)
     - TOCropViewController
-  - RNImageCropPicker/QBImagePickerController (0.31.1):
+  - RNImageCropPicker/QBImagePickerController (0.35.1):
     - React-Core
     - React-RCTImage
     - TOCropViewController
@@ -527,6 +529,7 @@ DEPENDENCIES:
   - react-native-google-maps (from `../node_modules/react-native-maps`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-maps (from `../node_modules/react-native-maps`)
+  - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-restart (from `../node_modules/react-native-restart`)
   - react-native-simple-toast (from `../node_modules/react-native-simple-toast`)
   - react-native-spinkit (from `../node_modules/react-native-spinkit`)
@@ -640,6 +643,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-image-picker"
   react-native-maps:
     :path: "../node_modules/react-native-maps"
+  react-native-netinfo:
+    :path: "../node_modules/@react-native-community/netinfo"
   react-native-restart:
     :path: "../node_modules/react-native-restart"
   react-native-simple-toast:
@@ -751,6 +756,7 @@ SPEC CHECKSUMS:
   react-native-google-maps: 0a989abda71059db2caa98b9dacca7a8f38a47d0
   react-native-image-picker: 32d1ad2c0024ca36161ae0d5c2117e2d6c441f11
   react-native-maps: f4b89da81626ad7f151a8bfcb79733295d31ce5c
+  react-native-netinfo: 52cf0ee8342548a485e28f4b09e56b477567244d
   react-native-restart: 3b23471050bde7f392395703c4a3f959e2b0ff8e
   react-native-simple-toast: a3a8e9033a549c11741debe875e54698cc4c0dd7
   react-native-spinkit: da294fd828216ad211fe36a5c14c1e09f09e62db
@@ -772,7 +778,7 @@ SPEC CHECKSUMS:
   RNDateTimePicker: 3a1783e63fcb6e2b162b08a4321db030d23accff
   RNFirebase: 37daa9a346d070f9f6ee1f3b4aaf4c8e3b1d5d1c
   RNGestureHandler: 7a5833d0f788dbd107fbb913e09aa0c1ff333c39
-  RNImageCropPicker: 38865ab4af1b0b2146ad66061196bc0184946855
+  RNImageCropPicker: 16951bc02411f50c4d197488ed6406a23dc3b5f1
   RNPermissions: e29e449d948ba1c04f3bb3bede5c662667543c49
   RNReanimated: 89f5e0a04d1dd52fbf27e7e7030d8f80a646a3fc
   RNScreens: 0e91da98ab26d5d04c7b59a9b6bd694124caf88c
@@ -785,4 +791,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: b8f9bf09ca8dc9cbb16da21643253f836bd35e5b
 
-COCOAPODS: 1.10.0
+COCOAPODS: 1.10.1

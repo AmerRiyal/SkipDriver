@@ -84,8 +84,8 @@ class Main extends Component {
                 markerPosition: {
                   latitude: parseFloat(myorder.VendorLat),
                   longitude: parseFloat(myorder.VendorLng),
-                  latitudeDelta: 0.005,
-                  longitudeDelta: 0.005,
+                  latitudeDelta: 0.0055,
+                  longitudeDelta: 0.0055,
                 },
                 markerShown: true,
                 hasOrder: true,
@@ -103,8 +103,8 @@ class Main extends Component {
       markerPosition: {
         latitude: parseFloat(data.VendorLat),
         longitude: parseFloat(data.VendorLng),
-        latitudeDelta: 0.005,
-        longitudeDelta: 0.005,
+        latitudeDelta: 0.0056,
+        longitudeDelta: 0.0056,
       },
       markerShown: true,
     }));
@@ -357,9 +357,56 @@ class Main extends Component {
     firstTime = true;
     AppState.addEventListener('change', this._handleAppStateChange);
     this.checkPermission();
-    if (this.props.hasOrder) {
+    // __DEV__&&alert(this.props.hasOrder);
+    let orders = await ks.GetDriverOrders({
+      DriverID: this.props.user.ID,
+      PageNumber: 1,
+      Pagesize: 1,
+      langID: Strings.langID,
+    });
+    let reloaded = false;
+    if (
+      this.props.hasOrder ||
+      (orders &&
+        orders.orders &&
+        orders.orders[0] &&
+        orders.orders[0].Status > 0 &&
+        orders.orders[0].Status <= 6)
+    ) {
+      if (!this.props.hasOrder) {
+        reloaded = true;
+
+        orders.orders[0].OrderAddress = {
+          Latitude: orders.orders[0].OrderLat,
+          Longitude: orders.orders[0].OrderLng,
+          Label: orders.orders[0].AddressLabel,
+          Address1: orders.orders[0].Address1,
+          Phone1: orders.orders[0].Phone1,
+        };
+        this.props.AddOrder(orders.orders[0]);
+        this.setState({
+          markerPosition: {
+            latitude: parseFloat(orders.orders[0].VendorLat),
+            longitude: parseFloat(orders.orders[0].VendorLng),
+            latitudeDelta: 0.0051,
+            longitudeDelta: 0.0051,
+          },
+          notificationData: {
+            VendorLat: orders.orders[0].VendorLat,
+            VendorLng: orders.orders[0].VendorLng,
+          },
+          markerShown: true,
+          hasOrder: true,
+          orderStatus: orders.orders[0].Status,
+        });
+      }
       let order = await this.getUpdatedOrderStatus();
-      if (order && order.result && order !== Constants.OrderStatus.Cancelled) {
+
+      if (
+        order &&
+        order.result &&
+        order.status !== Constants.OrderStatus.Cancelled
+      ) {
         this.props.ChangeDriverStatus(true, () => {
           this.setState({
             hasOrder: true,
@@ -369,47 +416,49 @@ class Main extends Component {
         });
         this.props.UpdateOrderStatus(order.status);
         this.changeDriverStatus();
-        if (order.status <= 6) {
-          this.setState((prevState) => ({
-            markerPosition: {
-              latitude: parseFloat(this.props.order.VendorLat),
-              longitude: parseFloat(this.props.order.VendorLng),
-              latitudeDelta: 0.005,
-              longitudeDelta: 0.005,
-            },
-            markerShown: true,
-          }));
+        if (this.props.order.VendorLat) {
+          if (order.status <= 6) {
+            this.setState((prevState) => ({
+              markerPosition: {
+                latitude: parseFloat(this.props.order.VendorLat),
+                longitude: parseFloat(this.props.order.VendorLng),
+                latitudeDelta: 0.0052,
+                longitudeDelta: 0.0052,
+              },
+              markerShown: true,
+            }));
 
-          this.refs.map.animateToRegion(
-            {
-              latitude: parseFloat(this.props.order.VendorLat) - 0.002,
-              longitude: parseFloat(this.props.order.VendorLng),
-              latitudeDelta: 0.005,
-              longitudeDelta: 0.005,
-            },
-            1000,
-          );
-        } else {
-          this.setState((prevState) => ({
-            markerPosition: {
-              latitude: parseFloat(this.props.order.OrderAddress.Latitude),
-              longitude: parseFloat(this.props.order.OrderAddress.Longitude),
-              latitudeDelta: 0.005,
-              longitudeDelta: 0.005,
-            },
-            markerShown: true,
-          }));
+            this.refs.map.animateToRegion(
+              {
+                latitude: parseFloat(this.props.order.VendorLat) - 0.002,
+                longitude: parseFloat(this.props.order.VendorLng),
+                latitudeDelta: 0.005,
+                longitudeDelta: 0.005,
+              },
+              1000,
+            );
+          } else {
+            this.setState((prevState) => ({
+              markerPosition: {
+                latitude: parseFloat(this.props.order.OrderAddress.Latitude),
+                longitude: parseFloat(this.props.order.OrderAddress.Longitude),
+                latitudeDelta: 0.0053,
+                longitudeDelta: 0.0053,
+              },
+              markerShown: true,
+            }));
 
-          this.refs.map.animateToRegion(
-            {
-              latitude:
-                parseFloat(this.props.order.OrderAddress.Latitude) - 0.002,
-              longitude: parseFloat(this.props.order.OrderAddress.Longitude),
-              latitudeDelta: 0.005,
-              longitudeDelta: 0.005,
-            },
-            1000,
-          );
+            this.refs.map.animateToRegion(
+              {
+                latitude:
+                  parseFloat(this.props.order.OrderAddress.Latitude) - 0.002,
+                longitude: parseFloat(this.props.order.OrderAddress.Longitude),
+                latitudeDelta: 0.005,
+                longitudeDelta: 0.005,
+              },
+              1000,
+            );
+          }
         }
       } else {
         this.props.RemoveOrder();
@@ -438,12 +487,11 @@ class Main extends Component {
     try {
       orderStatus = await ks.getOrderStatus({
         orderID: this.props.order?.OrderID,
-        DriverID: this.porps.user.ID,
+        DriverID: this.props.user.ID,
       });
     } catch (error) {
       orderStatus = null;
     }
-
     return orderStatus;
   };
   updateProviderInfo = async () => {
@@ -586,7 +634,7 @@ class Main extends Component {
                             longitude: parseFloat(
                               this.props.order.OrderAddress.Longitude,
                             ),
-                            latitudeDelta: 0.005,
+                            latitudeDelta: 0.0054,
                             longitudeDelta: 0.005,
                           },
                           markerShown: true,
@@ -648,13 +696,13 @@ class Main extends Component {
               />
               <View>
                 <Text style={styles.userinfo}>
-                  {this.props.order.OwnerName}
+                  {this.props.order?.OwnerName}
                 </Text>
                 <Text style={styles.userinfo2}>
-                  {this.props.order.OrderAddress.Label}
+                  {this.props.order?.OrderAddress?.Label}
                 </Text>
                 <Text style={styles.userinfo2}>
-                  {this.props.order.OrderAddress.Address1}
+                  {this.props.order?.OrderAddress?.Address1}
                 </Text>
               </View>
             </View>
@@ -663,7 +711,7 @@ class Main extends Component {
                 style={styles.userDataView}
                 onPress={() => {
                   Linking.openURL(
-                    `tel:${this.props.order.OrderAddress.Phone1}`,
+                    `tel:${this.props.order?.OrderAddress?.Phone1}`,
                   );
                 }}>
                 <AppIcon
@@ -826,7 +874,9 @@ class Main extends Component {
             <Text style={styles.title}>
               {this.state.notificationData?.BranchName}
             </Text>
-            <Text style={styles.subtitle}>{'7th circle, Amman Jordan'}</Text>
+            <Text style={styles.subtitle}>
+              {this.state.notificationData?.UserAddress.Address1}
+            </Text>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <TouchableOpacity
                 onPress={() => {
