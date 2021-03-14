@@ -75,7 +75,7 @@ class Home extends Component {
               <Text style={{textDecorationLine: 'underline'}}>
                 {Strings.Terms}
               </Text>
-              <Text>{Strings.and}</Text>
+              <Text> {Strings.and} </Text>
               <Text style={{textDecorationLine: 'underline'}}>
                 {Strings.privacy}
               </Text>

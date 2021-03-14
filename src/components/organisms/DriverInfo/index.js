@@ -56,7 +56,7 @@ export default class DriverInfo extends Component {
       return Strings.InvalidPhone;
     } else if (!Validate.isPassword(this.state.password)) {
       return Strings.InvalidPassword;
-    } else if (this.state.Iban.length < 30) {
+    } else if (this.state.Iban.length < 24) {
       return Strings.WrongIban;
     }
     return undefined;
