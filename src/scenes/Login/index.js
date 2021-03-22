@@ -13,7 +13,7 @@ import {AppTextInput, AppButton, AppIcon, AppLogo, LoadingView} from '@atoms';
 import KS from '@services/KSAPI';
 import Toast from 'react-native-simple-toast';
 import {connect} from 'react-redux';
-import firebase, {Notification, NotificationOpen} from 'react-native-firebase';
+import messaging from '@react-native-firebase/messaging';
 
 class Login extends Component {
   constructor(props) {
@@ -38,7 +38,7 @@ class Login extends Component {
 
   setPushNotification(ID) {
     const _this = this;
-    FCM = firebase.messaging();
+    FCM = messaging();
     // check to make sure the user is authenticated
     // requests permissions from the user
     FCM.requestPermission();

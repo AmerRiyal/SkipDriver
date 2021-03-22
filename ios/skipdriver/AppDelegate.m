@@ -3,10 +3,8 @@
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
-#import "RNFirebaseNotifications.h"
 #import "GoogleMaps/GoogleMaps.h"
 #import <Firebase.h>
-#import "RNFirebaseMessaging.h"
 
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
@@ -34,7 +32,6 @@ static void InitializeFlipper(UIApplication *application) {
 {
   [GMSServices provideAPIKey:@"AIzaSyCxuTDkt1YtNrx8sOhK-rI_3fUD117_3Xk"];
   [FIRApp configure];
-  [RNFirebaseNotifications configure];
 #ifdef FB_SONARKIT_ENABLED
   InitializeFlipper(application);
 #endif
@@ -55,9 +52,7 @@ static void InitializeFlipper(UIApplication *application) {
   return YES;
 }
 
-- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
-  [[RNFirebaseNotifications instance] didReceiveLocalNotification:notification];
-}
+
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
@@ -68,13 +63,5 @@ static void InitializeFlipper(UIApplication *application) {
 #endif
 }
 
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo
-                                                       fetchCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHandler{
-  [[RNFirebaseNotifications instance] didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
-}
-
-- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
-  [[RNFirebaseMessaging instance] didRegisterUserNotificationSettings:notificationSettings];
-}
 
 @end

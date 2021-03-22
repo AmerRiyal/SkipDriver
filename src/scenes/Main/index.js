@@ -21,7 +21,7 @@ import Constants from '../../styles/Constants';
 import {AppButton, AppLogo, AppIcon} from '@atoms';
 import ks from '@services/KSAPI';
 import BackgroundTimer from 'react-native-background-timer';
-import firebase from 'react-native-firebase';
+import messaging from '@react-native-firebase/messaging';
 import ModalBox from 'react-native-modalbox';
 import BackgroundGeolocation from 'react-native-background-geolocation';
 import getDirections from 'react-native-google-maps-directions';
@@ -138,49 +138,56 @@ class Main extends Component {
 
   setupNotification() {
     const _this = this;
-    //App in foreground
-    _this.notificationListener = firebase
-      .notifications()
-      .onNotification((notificationOpen) => {
-        if (notificationOpen) {
-          if (notificationOpen.data && this.state.allowNewRequests) {
-            this.handleServiceNotification(notificationOpen.data, _this);
-          }
-        }
-      });
-
-    //App in background
-    _this.notificationOpenedListener = firebase
-      .notifications()
-      .onNotificationOpened((notificationOpen) => {
+    this.removeNotificationOpenedListener = messaging().onNotificationOpenedApp(
+      async (remoteMessage) => {
+        // Get the action triggered by the notification being opened
+        //const action = notificationOpen.action;
+        // Get information about the notification that was opened
+        const notificationOpen = remoteMessage;
         if (notificationOpen.data && this.state.allowNewRequests) {
-          //  alert(notificationOpen);
-          if (notificationOpen.notification) {
-            this.handleServiceNotification(
-              notificationOpen.notification.data,
-              _this,
-            );
-          }
+          this.handleServiceNotification(notificationOpen.data, _this);
         }
-      });
+      },
+    );
 
     //App closed in background
-    firebase
-      .notifications()
+    messaging()
       .getInitialNotification()
-      .then((notificationOpen) => {
-        if (notificationOpen) {
-          if (
-            notificationOpen.notification.data &&
-            this.state.allowNewRequests
-          ) {
-            this.handleServiceNotification(
-              notificationOpen.notification.data,
-              _this,
-            );
+      .then((remoteMessage) => {
+        if (remoteMessage) {
+          // App was opened by a notification
+          // Get the action triggered by the notification being opened
+          //const action = notificationOpen.action;
+          // Get information about the notification that was opened
+          const notificationOpen = remoteMessage;
+          if (notificationOpen.data && this.state.allowNewRequests) {
+            //  alert(notificationOpen);
+            if (notificationOpen) {
+              this.handleServiceNotification(notificationOpen.data, _this);
+            }
           }
         }
       });
+    messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+      if (remoteMessage) {
+        // App was opened by a notification
+        // Get the action triggered by the notification being opened
+        //const action = notificationOpen.action;
+        // Get information about the notification that was opened
+        const notificationOpen = remoteMessage;
+        if (notificationOpen.data && this.state.allowNewRequests) {
+          this.handleServiceNotification(notificationOpen.data, _this);
+        }
+      }
+    });
+
+    messaging().onMessage(async (remoteMessage) => {
+      if (remoteMessage) {
+        if (remoteMessage.data && this.state.allowNewRequests) {
+          this.handleServiceNotification(notificationOpen.data, _this);
+        }
+      }
+    });
   }
 
   handleRejectedLocation = () => {

@@ -19,7 +19,7 @@ const MyDrawerNavigator = createDrawerNavigator(
   {
     Main: {
       screen: MainScreen,
-    },
+    }, 
     DriverOrders: {
       screen: DriverOrders,
     },
