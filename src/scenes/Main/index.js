@@ -250,6 +250,12 @@ class Main extends Component {
       Permissions.check('android.permission.ACCESS_FINE_LOCATION').then(
         (response) => {
           if (response != 'granted') {
+            Alert.alert(Strings.location, Strings.PermissionAlert, [
+              {
+                text: Strings.Ok,
+                onPress: () => {},
+              },
+            ]);
             Permissions.request('android.permission.ACCESS_FINE_LOCATION')
               .then((value) => {
                 if (value == 'granted') {
@@ -277,6 +283,14 @@ class Main extends Component {
     } else {
       check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE).then((response) => {
         if (response == 'blocked') {
+          Alert.alert(Strings.location, Strings.PermissionAlert, [
+            {
+              text: Strings.Ok,
+              onPress: () => {
+                Linking.openURL('app-settings://');
+              },
+            },
+          ]);
           Alert.alert(Strings.location, Strings.enableLocation, [
             {
               text: Strings.Ok,

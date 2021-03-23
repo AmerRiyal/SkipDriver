@@ -50,6 +50,9 @@ let Strings = new LocalizedStrings({
     ExtraHot: 'Extra Hot',
     SpecialInst: 'Special instructions',
     AddNote: 'Add a note to this item',
+    PermissionAlert:
+      'Warning, we use the site permanently to facilitate the arrival of requests closest to you according to your location',
+
     Quantity: 'Quantity',
     ViewOrder: 'View Order',
     Comments: 'Comments'.toUpperCase(),
@@ -188,6 +191,7 @@ let Strings = new LocalizedStrings({
     DriverisNotActive: 'Your account has not been activated yet',
     becomeActive: 'Become Active',
     becomeInActive: 'Become InActive',
+
     newRequest: 'New Request'.toUpperCase(),
     Accept: 'Accept',
     GotOrder: 'Got The Order',
@@ -420,6 +424,8 @@ let Strings = new LocalizedStrings({
     TotalOrders: 'مجموع\nالطلبات',
     Earning: 'الكسب',
     TotalEarning: 'مجموع الأرباح',
+    PermissionAlert:
+      'تنبيه, نحن نقوم بإستخدام الموقع بشكل دائم لتسهيل وصول الطلبات الاقرب اليك حسب موقعك',
     Support: 'مساعدة',
     Ok: 'نعم',
     Cancel: 'لا',
