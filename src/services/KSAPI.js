@@ -1,7 +1,7 @@
 import KensoftApi from "@services/KensoftApi";
 
 var ks = new KensoftApi({
-  url: "http://skiptheque.kensoftware.com/",
+  url: "http://skiptheq.world/",
   logo: ""
 });
 

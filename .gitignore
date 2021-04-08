@@ -20,7 +20,7 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
-
+java_pid16616.hprof
 # Android/IntelliJ
 #
 build/
@@ -40,6 +40,7 @@ buck-out/
 \.buckd/
 *.keystore
 !debug.keystore
+
 
 # fastlane
 #

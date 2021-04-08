@@ -308,6 +308,22 @@ KensoftApi.prototype.ProviderAcceptRequest = function (data) {
   });
 };
 
+KensoftApi.prototype.DriverCheckOrder = function (data) {
+  var requestUrl = '';
+  if (data) {
+    requestUrl = this.join(data, '&');
+  } else {
+    requestUrl = 'parent=0';
+  }
+
+  var requestUrl = this.url + '/services/DriverCheckOrder?' + requestUrl;
+
+  return this._request(requestUrl).then(function (data) {
+    return data;
+  });
+};
+
+
 KensoftApi.prototype.ProviderRejectRequest = function (data) {
   var requestUrl = '';
   if (data) {

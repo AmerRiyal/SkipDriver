@@ -37,13 +37,9 @@ class Login extends Component {
   };
 
   setPushNotification(ID) {
-    const _this = this;
-    FCM = messaging();
-    // check to make sure the user is authenticated
-    // requests permissions from the user
-    FCM.requestPermission();
-    // gets the device's push token
-    FCM.getToken().then((token) => {
+    messaging().requestPermission();
+    messaging().getToken().then((token) => {
+    //  console.log("   Tokenn   ",token);
       KS.SetUserToken({
         userid: ID,
         token: token,
@@ -68,7 +64,11 @@ class Login extends Component {
             (g) => g.ID === Constants.DriverUser,
           );
           if (hasAccess) {
-            this.setPushNotification(user.ID);
+            try {
+              this.setPushNotification(user.ID);
+            } catch (error) {
+              alert(error)
+            }
             this.props.Login(user);
             this.props.navigation.navigate('App');
           } else {

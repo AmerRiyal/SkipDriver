@@ -1,4 +1,4 @@
-import React, {Component, Fragment} from 'react';
+import React, { Component, Fragment } from 'react';
 import {
   View,
   Text,
@@ -12,27 +12,29 @@ import {
   Alert,
   Platform,
 } from 'react-native';
-import Permissions, {PERMISSIONS, check} from 'react-native-permissions';
+import Permissions, { PERMISSIONS, check } from 'react-native-permissions';
 import Geolocation from 'react-native-geolocation-service';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
-import {connect} from 'react-redux';
-import {AppStyles, Images, Strings, Colors} from '@styles';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { connect } from 'react-redux';
+import { AppStyles, Images, Strings, Colors } from '@styles';
 import Constants from '../../styles/Constants';
-import {AppButton, AppLogo, AppIcon} from '@atoms';
+import { AppButton, AppLogo, AppIcon } from '@atoms';
 import ks from '@services/KSAPI';
 import BackgroundTimer from 'react-native-background-timer';
 import messaging from '@react-native-firebase/messaging';
 import ModalBox from 'react-native-modalbox';
 import BackgroundGeolocation from 'react-native-background-geolocation';
 import getDirections from 'react-native-google-maps-directions';
-import {NavigationEvents} from 'react-navigation';
+import { NavigationEvents } from 'react-navigation';
 
 let firstTime = true;
+const serviceCallDelay = 60;
 
 class Main extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      Timer: serviceCallDelay,
       driverLocation: {
         latitude: 31.9526128,
         longitude: 35.8465049,
@@ -58,10 +60,10 @@ class Main extends Component {
     let destinations = userAddress.Latitude + ',' + userAddress.Longitude;
     fetch(
       'https://maps.googleapis.com/maps/api/distancematrix/json?origins=' +
-        origins +
-        '&destinations=' +
-        destinations +
-        '&key=AIzaSyCxuTDkt1YtNrx8sOhK-rI_3fUD117_3Xk',
+      origins +
+      '&destinations=' +
+      destinations +
+      '&key=AIzaSyCxuTDkt1YtNrx8sOhK-rI_3fUD117_3Xk',
     )
       .then((responseJson) => responseJson.json())
       .then((response) => {
@@ -74,7 +76,9 @@ class Main extends Component {
             OrderID: this.state.notificationData?.OrderID,
             DeliveryTime: time,
           }).then((data) => {
+            //     console.log("qweqwe",JSON.stringify(data))
             if (data.result) {
+
               this.refs.modalbox.close();
               let myorder = data.Order;
               myorder.VendorLat = this.state.notificationData?.VendorLat;
@@ -95,7 +99,7 @@ class Main extends Component {
           });
         }
       })
-      .catch((reason) => {});
+      .catch((reason) => { });
   };
 
   handleServiceNotification = (data, _this) => {
@@ -131,7 +135,7 @@ class Main extends Component {
     //   })
     //   .catch((error) => console.warn(error));
 
-    this.setState({notificationData: data}, () => {
+    this.setState({ notificationData: data }, () => {
       this.refs.modalbox.open();
     });
   };
@@ -193,7 +197,7 @@ class Main extends Component {
   handleRejectedLocation = () => {
     if (!this.props.hasOrder) {
       BackgroundTimer.stopBackgroundTimer();
-      this.setState({allowLocation: false, active: false});
+      this.setState({ allowLocation: false, active: false });
     } else Alert.alert('', Strings.enableLocation);
   };
 
@@ -222,7 +226,7 @@ class Main extends Component {
           latitudeDelta: 0.009,
           longitudeDelta: 0.009,
         };
-        this.setState({driverLocation: region}, () => {
+        this.setState({ driverLocation: region }, () => {
           if (firstTime) {
             firstTime = false;
             this.refs.map.animateToRegion(
@@ -241,7 +245,7 @@ class Main extends Component {
       (error) => {
         this.handleRejectedLocation();
       },
-      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
     );
   };
 
@@ -253,13 +257,13 @@ class Main extends Component {
             Alert.alert(Strings.location, Strings.PermissionAlert, [
               {
                 text: Strings.Ok,
-                onPress: () => {},
+                onPress: () => { },
               },
             ]);
             Permissions.request('android.permission.ACCESS_FINE_LOCATION')
               .then((value) => {
                 if (value == 'granted') {
-                  this.setState({allowLocation: true}, () => {
+                  this.setState({ allowLocation: true }, () => {
                     this.watchPosition();
                     this.activeBackgroundLocation();
                   });
@@ -271,7 +275,7 @@ class Main extends Component {
                 this.handleRejectedLocation();
               });
           } else if (response == 'granted') {
-            this.setState({allowLocation: true}, () => {
+            this.setState({ allowLocation: true }, () => {
               this.watchPosition();
               this.activeBackgroundLocation();
             });
@@ -298,14 +302,14 @@ class Main extends Component {
                 Linking.openURL('app-settings://');
               },
             },
-            {text: Strings.Cancel, onPress: () => {}},
+            { text: Strings.Cancel, onPress: () => { } },
           ]);
         }
         if (response != 'granted') {
           Permissions.request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
             .then((value) => {
               if (value == 'granted') {
-                this.setState({allowLocation: true}, () => {
+                this.setState({ allowLocation: true }, () => {
                   this.watchPosition();
                   this.activeBackgroundLocation();
                 });
@@ -316,7 +320,7 @@ class Main extends Component {
               this.handleRejectedLocation();
             });
         } else if (response == 'granted') {
-          this.setState({allowLocation: true}, () => {
+          this.setState({ allowLocation: true }, () => {
             this.watchPosition();
             this.activeBackgroundLocation();
           });
@@ -374,7 +378,38 @@ class Main extends Component {
     );
   };
 
+
+  serviceTimer = () => {
+    this.myInterval = setInterval(() => {
+      this.setState(prevState => ({
+        Timer: prevState.Timer - 1
+      }))
+
+      if (this.state.Timer <= 1) {
+        this.setState({ Timer: serviceCallDelay })
+        this.recallAPI();
+      }
+
+    }, 1000)
+  }
+
+  recallAPI = () => {
+    ks.DriverCheckOrder({
+      ProviderID: this.props.user.ID
+    }).then(data => {
+      if (data.result == 1) {
+        if (data.Order.ID) {
+          console.log("qweqwe")
+        }
+      }
+    })
+  }
+
+
   componentDidMount = async () => {
+
+    this.serviceTimer(); // this service to call service every 60 seconds
+
     firstTime = true;
     AppState.addEventListener('change', this._handleAppStateChange);
     this.checkPermission();
@@ -385,6 +420,12 @@ class Main extends Component {
       Pagesize: 1,
       langID: Strings.langID,
     });
+    try {
+      console.log("asdasdasd", JSON.stringify(orders))
+    } catch (error) {
+      __DEV__ && alert('');
+      console.log("###########", error)
+    }
     let reloaded = false;
     if (
       this.props.hasOrder ||
@@ -419,6 +460,7 @@ class Main extends Component {
           markerShown: true,
           hasOrder: true,
           orderStatus: orders.orders[0].Status,
+
         });
       }
       let order = await this.getUpdatedOrderStatus();
@@ -488,6 +530,7 @@ class Main extends Component {
   };
 
   componentWillUnmount() {
+    clearInterval(this.myInterval);
     AppState.removeEventListener('change', this._handleAppStateChange);
     BackgroundGeolocation.removeListeners();
     Geolocation.clearWatch(this.watchID);
@@ -500,7 +543,7 @@ class Main extends Component {
     ) {
       this.checkPermission();
     }
-    this.setState({appState: nextAppState});
+    this.setState({ appState: nextAppState });
   };
 
   getUpdatedOrderStatus = async () => {
@@ -604,7 +647,36 @@ class Main extends Component {
       case Constants.OrderStatus.Preparing:
       case Constants.OrderStatus.PendingDelivery:
         return (
-          <Fragment>
+          <>
+            <View
+              style={{
+                paddingHorizontal: 15,
+                height: 40,
+                borderBottomEndRadius: 10,
+                borderBottomStartRadius: 10,
+
+                backgroundColor: Colors.DarkTextColor,
+                position: 'absolute',
+                alignSelf: 'center',
+               marginTop:-1,
+                justifyContent: 'center'
+              }}>
+              <Text
+                style={{
+                  color: '#fff',
+                  fontSize: 20,
+                  flex: 1,
+                  textAlignVertical:'center',
+                  alignSelf: 'center',
+                  fontWeight:'bold'
+                }}
+              >
+                {Strings.OrderNumber}
+                {this.props.order?.OrderID}
+
+              </Text>
+            </View>
+
             <AppButton
               ExtraStyle={{
                 flex: 1,
@@ -626,7 +698,7 @@ class Main extends Component {
                   width: '100%',
                   opacity:
                     this.props.orderStatus ==
-                    Constants.OrderStatus.PendingDelivery
+                      Constants.OrderStatus.PendingDelivery
                       ? 1
                       : 0.5,
                 }}
@@ -646,7 +718,21 @@ class Main extends Component {
                     if (data.result) {
                       let updatedStatus = await this.getUpdatedOrderStatus();
                       this.props.UpdateOrderStatus(updatedStatus.status);
+                      // console.log('#############')
+                      // console.log("location s" ,
+                      //       JSON.stringify(this.props.order.OrderAddress)
+                      //        + "   loc 2  " + 
+                      //        JSON.stringify(this.props.order.OrderAddress)
+
+                      //        );
+                      // console.log('#############222222222')
+                      // console.log("location s" , 
+                      // JSON.stringify( this.props.order)
+                      //        + "  loc2   " + 
+                      //        JSON.stringify(  this.props.order)
+                      //        );
                       this.setState(
+
                         {
                           markerPosition: {
                             latitude: parseFloat(
@@ -695,7 +781,7 @@ class Main extends Component {
                 }}
               />
             </View>
-          </Fragment>
+          </>
         );
       case Constants.OrderStatus.InDelivery:
         return (
@@ -727,7 +813,7 @@ class Main extends Component {
                 </Text>
               </View>
             </View>
-            <View style={{flexDirection: 'row', width: '100%'}}>
+            <View style={{ flexDirection: 'row', width: '100%' }}>
               <TouchableOpacity
                 style={styles.userDataView}
                 onPress={() => {
@@ -748,7 +834,7 @@ class Main extends Component {
                 }}
                 style={[
                   styles.userDataView,
-                  {borderRightWidth: 0, paddingTop: 13},
+                  { borderRightWidth: 0, paddingTop: 13 },
                 ]}>
                 <AppIcon
                   type={'SimpleLineIcons'}
@@ -845,12 +931,12 @@ class Main extends Component {
 
   render() {
     return (
-      <View style={{flex: 1}}>
+      <View style={{ flex: 1 }}>
         <MapView
           ref={'map'}
           initialRegion={this.state.driverLocation}
           provider={PROVIDER_GOOGLE} // remove if not using Google Maps
-          style={[styles.map, {marginBottom: this.state.marginBottom}]}
+          style={[styles.map, { marginBottom: this.state.marginBottom }]}
           loadingEnabled
           followsUserLocation
           showsUserLocation>
@@ -861,19 +947,20 @@ class Main extends Component {
 
         {this.renderContent()}
         <ModalBox
+          useNativeDriver={true}
           style={[styles.modalbox]}
           ref={'modalbox'}
           backdropPressToClose={false}
           swipeToClose={false}
           onClosed={() => {
-            this.setState({allowNewRequests: true});
+            this.setState({ allowNewRequests: true });
           }}
           onOpened={() => {
-            this.setState({allowNewRequests: false});
+            this.setState({ allowNewRequests: false });
           }}
           position="bottom">
           <View style={styles.modalContent}>
-            <Text style={[styles.title, {marginBottom: 0}]}>
+            <Text style={[styles.title, { marginBottom: 0 }]}>
               {Strings.newRequest}
             </Text>
             <Image
@@ -898,7 +985,7 @@ class Main extends Component {
             <Text style={styles.subtitle}>
               {this.state.notificationData?.UserAddress.Address1}
             </Text>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <TouchableOpacity
                 onPress={() => {
                   ks.ProviderRejectRequest({
@@ -908,7 +995,7 @@ class Main extends Component {
                     if (data.result) {
                       this.refs.modalbox.close();
                       this.setState(
-                        {markerPosition: null, markerShown: false},
+                        { markerPosition: null, markerShown: false },
                         () => {
                           this.refs.map.animateToRegion(
                             {
@@ -926,8 +1013,8 @@ class Main extends Component {
                     }
                   });
                 }}
-                style={[styles.acceptBut, {backgroundColor: '#DA0000'}]}>
-                <Text style={{color: '#fff'}}>{Strings.Reject}</Text>
+                style={[styles.acceptBut, { backgroundColor: '#DA0000' }]}>
+                <Text style={{ color: '#fff' }}>{Strings.Reject}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
@@ -938,9 +1025,9 @@ class Main extends Component {
                 }}
                 style={[
                   styles.acceptBut,
-                  {backgroundColor: Colors.primary, marginLeft: 25},
+                  { backgroundColor: Colors.primary, marginLeft: 25 },
                 ]}>
-                <Text style={{color: '#fff'}}>{Strings.Accept}</Text>
+                <Text style={{ color: '#fff' }}>{Strings.Accept}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -1113,7 +1200,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = ({UserReducer, OrderReducer}) => {
+const mapStateToProps = ({ UserReducer, OrderReducer }) => {
   return {
     user: UserReducer.user,
     order: OrderReducer.order,
@@ -1124,7 +1211,7 @@ const mapStateToProps = ({UserReducer, OrderReducer}) => {
 };
 
 const mapDispatchToProps = (dispatch) => {
-  const {actions} = require('@redux/UserReducer');
+  const { actions } = require('@redux/UserReducer');
   const orderActions = require('@redux/OrderReducer');
 
   return {
