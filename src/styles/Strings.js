@@ -21,6 +21,7 @@ let Strings = new LocalizedStrings({
     forgetPassword: 'Forgot your magic, very secret password?',
     DontHaveAccount: "Don't have an account?",
     Signup: 'Signup',
+    Version: 'Version number: 3.10',
     Name: 'Name',
     phone: 'Mobile Phone',
     SignUpText: 'Stop waiting, start skipping',
@@ -50,8 +51,8 @@ let Strings = new LocalizedStrings({
     ExtraHot: 'Extra Hot',
     SpecialInst: 'Special instructions',
     AddNote: 'Add a note to this item',
-    PermissionAlert:
-      'Warning, we use the site permanently to facilitate the arrival of requests closest to you according to your location',
+    PermissionAlert:'Warning, This app collects location data to enable to facilitate the arrival of requests closest to you according to your location even when the app is closed or not in use.'
+    ,
 
     Quantity: 'Quantity',
     ViewOrder: 'View Order',
@@ -402,6 +403,7 @@ let Strings = new LocalizedStrings({
     contactYouSoon: 'سنتواصل معك قريبا لإتمام عملية التسجيل',
     driverText: 'سجل كسائق لدى سكيب وقم بكسب المال الإضافي',
     DriverSignUpMessage: 'تأكد من ان المعلومات المدخلة صحيحة',
+    Version: 'نسخة رقم: 3.10',
     DriverisNotActive: 'لم يتم تفعيل هذا الحساب بعد',
     becomeActive: 'متاح',
     becomeInActive: 'غير متاح',
@@ -425,7 +427,7 @@ let Strings = new LocalizedStrings({
     Earning: 'الكسب',
     TotalEarning: 'مجموع الأرباح',
     PermissionAlert:
-      'تنبيه, نحن نقوم بإستخدام الموقع بشكل دائم لتسهيل وصول الطلبات الاقرب اليك حسب موقعك',
+      'تنبيه يجمع هذا التطبيق بيانات الموقع لتمكين وصول الطلبات الأقرب إليك وفقًا لموقعك حتى عندما يكون التطبيق مغلقًا أو غير مستخدم.',
     Support: 'مساعدة',
     Ok: 'نعم',
     Cancel: 'لا',
