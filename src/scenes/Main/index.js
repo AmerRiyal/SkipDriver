@@ -198,7 +198,14 @@ class Main extends Component {
     if (!this.props.hasOrder) {
       BackgroundTimer.stopBackgroundTimer();
       this.setState({ allowLocation: false, active: false });
-    } else Alert.alert('', Strings.enableLocation);
+    } else{
+        Alert.alert(Strings.location, Strings.PermissionAlertActiveOrder, [
+          {
+            text: Strings.Ok,
+            onPress: () => {this.checkPermission(); },
+          },{ text: Strings.Cancel, onPress: () => { } },
+        ]);
+      }
   };
 
   getProviderData = () => {
@@ -249,17 +256,38 @@ class Main extends Component {
     );
   };
 
-  checkPermission = () => {
+  AlertRequestPermission = () => {
     if (Platform.OS == 'android') {
       Permissions.check('android.permission.ACCESS_FINE_LOCATION').then(
         (response) => {
           if (response != 'granted') {
             Alert.alert(Strings.location, Strings.PermissionAlert, [
-              {
-                text: Strings.Ok,
-                onPress: () => { },
-              },
-            ]);
+            {
+              text: Strings.Ok,
+              onPress: () => {this.checkPermission(); },
+            },{ text: Strings.Cancel, onPress: () => { } },
+          ]);}
+        },
+      );
+    } else {
+      check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE).then((response) => {
+        if (response != 'granted') {
+          Alert.alert(Strings.location, Strings.PermissionAlert, [
+            {
+              text: Strings.Ok,
+              onPress: () => {this.checkPermission(); },
+            },{ text: Strings.Cancel, onPress: () => { } },
+          ]);
+        }
+      });
+    }
+  };
+
+  checkPermission = () => {
+    if (Platform.OS == 'android') {
+      Permissions.check('android.permission.ACCESS_FINE_LOCATION').then(
+        (response) => {
+          if (response != 'granted') {
             Permissions.request('android.permission.ACCESS_FINE_LOCATION')
               .then((value) => {
                 if (value == 'granted') {
@@ -287,14 +315,6 @@ class Main extends Component {
     } else {
       check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE).then((response) => {
         if (response == 'blocked') {
-          Alert.alert(Strings.location, Strings.PermissionAlert, [
-            {
-              text: Strings.Ok,
-              onPress: () => {
-                Linking.openURL('app-settings://');
-              },
-            },
-          ]);
           Alert.alert(Strings.location, Strings.enableLocation, [
             {
               text: Strings.Ok,
@@ -412,7 +432,7 @@ class Main extends Component {
 
     firstTime = true;
     AppState.addEventListener('change', this._handleAppStateChange);
-    this.checkPermission();
+    this.AlertRequestPermission();
     // __DEV__&&alert(this.props.hasOrder);
     let orders = await ks.GetDriverOrders({
       DriverID: this.props.user.ID,
@@ -541,7 +561,7 @@ class Main extends Component {
       this.state.appState.match(/inactive|background/) &&
       nextAppState === 'active'
     ) {
-      this.checkPermission();
+      this.AlertRequestPermission();
     }
     this.setState({ appState: nextAppState });
   };
@@ -921,7 +941,7 @@ class Main extends Component {
                 this.changeDriverStatus();
               });
             } else {
-              this.checkPermission();
+              this.AlertRequestPermission();
             }
           }}
         />

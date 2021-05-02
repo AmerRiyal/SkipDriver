@@ -113,7 +113,7 @@ class Login extends Component {
             <AppTextInput
               containPhone={false}
               placeholder={Strings.Email}
-              keyboardType={'default'}
+              keyboardType={'email-address'}
               onChangeText={(text) => {
                 this.setState({email: text});
               }}

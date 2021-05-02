@@ -51,8 +51,8 @@ let Strings = new LocalizedStrings({
     ExtraHot: 'Extra Hot',
     SpecialInst: 'Special instructions',
     AddNote: 'Add a note to this item',
-    PermissionAlert:'Warning, This app collects location data to enable to facilitate the arrival of requests closest to you according to your location even when the app is closed or not in use.'
-    ,
+    PermissionAlert:'Warning, This app collects location data to enable to facilitate the arrival of requests closest to you according to your location even when the app is closed or not in use.',
+    PermissionAlertActiveOrder:'You have active order, you must allow location permession.',
 
     Quantity: 'Quantity',
     ViewOrder: 'View Order',
@@ -428,6 +428,7 @@ let Strings = new LocalizedStrings({
     TotalEarning: 'مجموع الأرباح',
     PermissionAlert:
       'تنبيه يجمع هذا التطبيق بيانات الموقع لتمكين وصول الطلبات الأقرب إليك وفقًا لموقعك حتى عندما يكون التطبيق مغلقًا أو غير مستخدم.',
+    PermissionAlertActiveOrder:'لديك طلب فعال, يجب عليك السماح لخدمة الموقع بمعرقة مكانك',//You have active order, you must allow location permession.
     Support: 'مساعدة',
     Ok: 'نعم',
     Cancel: 'لا',
