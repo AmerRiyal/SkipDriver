@@ -1,4 +1,6 @@
 import React, { Component, Fragment } from 'react';
+import SoundPlayer from 'react-native-sound-player'
+
 import {
   View,
   Text,
@@ -46,7 +48,7 @@ class Main extends Component {
       allowNewRequests: true,
       hasOrder: false,
       firstTime: true,
-      active: this.props.isActive,
+      active: true,
       allowLocation: false,
       markerShown: false,
     };
@@ -76,7 +78,7 @@ class Main extends Component {
             OrderID: this.state.notificationData?.OrderID,
             DeliveryTime: time,
           }).then((data) => {
-            //     console.log("qweqwe",JSON.stringify(data))
+          
             if (data.result) {
 
               this.refs.modalbox.close();
@@ -122,7 +124,14 @@ class Main extends Component {
       },
       1000,
     );
-
+    try {
+      // play the file tone.mp3
+      SoundPlayer.playSoundFile('notification', 'mp3')
+      // or play from url
+      //  SoundPlayer.playUrl('https://example.com/music.mp3')
+    } catch (e) {
+      console.log(`cannot play the sound file`, e)
+    }
     // Geocoder.from({
     //   lat: data.lat,
     //   lng: data.lng,
@@ -135,62 +144,93 @@ class Main extends Component {
     //   })
     //   .catch((error) => console.warn(error));
 
-    this.setState({ notificationData: data }, () => {
-      this.refs.modalbox.open();
-    });
+    setTimeout(() => {
+      this.setState({ notificationData: data }, () => this.refs.modalbox.open())
+
+    }, 10000);
   };
 
   setupNotification() {
     const _this = this;
-    this.removeNotificationOpenedListener = messaging().onNotificationOpenedApp(
-      async (remoteMessage) => {
-        // Get the action triggered by the notification being opened
-        //const action = notificationOpen.action;
-        // Get information about the notification that was opened
+    this.removeNotificationOpenedListener = messaging().onNotificationOpenedApp(async (remoteMessage) => {
+      // Get the action triggered by the notification being opened
+      //const action = notificationOpen.action;
+      // Get information about the notification that was opened
+      if (remoteMessage) {
         const notificationOpen = remoteMessage;
         if (notificationOpen.data && this.state.allowNewRequests) {
           this.handleServiceNotification(notificationOpen.data, _this);
         }
-      },
-    );
+      }
+    });
 
     //App closed in background
     messaging()
       .getInitialNotification()
       .then((remoteMessage) => {
+
+      
+
         if (remoteMessage) {
+          
+
           // App was opened by a notification
           // Get the action triggered by the notification being opened
           //const action = notificationOpen.action;
           // Get information about the notification that was opened
           const notificationOpen = remoteMessage;
           if (notificationOpen.data && this.state.allowNewRequests) {
-            //  alert(notificationOpen);
+
             if (notificationOpen) {
               this.handleServiceNotification(notificationOpen.data, _this);
             }
           }
+        } try {
+          // play the file tone.mp3
+          // SoundPlayer.playSoundFile('notification', 'mp3')
+          // or play from url
+          //  SoundPlayer.playUrl('https://example.com/music.mp3')
+        } catch (e) {
+          console.log(`cannot play the sound file`, e)
         }
       });
     messaging().setBackgroundMessageHandler(async (remoteMessage) => {
       if (remoteMessage) {
+
+
         // App was opened by a notification
         // Get the action triggered by the notification being opened
         //const action = notificationOpen.action;
         // Get information about the notification that was opened
         const notificationOpen = remoteMessage;
+        console.log("Notification" , JSON(notificationOpen))
+
         if (notificationOpen.data && this.state.allowNewRequests) {
           this.handleServiceNotification(notificationOpen.data, _this);
         }
+      } try {
+        // play the file tone.mp3
+        // SoundPlayer.playSoundFile('notification', 'mp3')
+        // or play from url
+        //  SoundPlayer.playUrl('https://example.com/music.mp3')
+      } catch (e) {
+        console.log(`cannot play the sound file`, e)
       }
     });
 
     messaging().onMessage(async (remoteMessage) => {
+      const notificationOpen = remoteMessage;
+   
+      console.log("sssssss" , JSON.stringify(remoteMessage))
+
+
       if (remoteMessage) {
+
         if (remoteMessage.data && this.state.allowNewRequests) {
           this.handleServiceNotification(notificationOpen.data, _this);
         }
-      }
+      } 
+
     });
   }
 
@@ -198,14 +238,14 @@ class Main extends Component {
     if (!this.props.hasOrder) {
       BackgroundTimer.stopBackgroundTimer();
       this.setState({ allowLocation: false, active: false });
-    } else{
-        Alert.alert(Strings.location, Strings.PermissionAlertActiveOrder, [
-          {
-            text: Strings.Ok,
-            onPress: () => {this.checkPermission(); },
-          },{ text: Strings.Cancel, onPress: () => { } },
-        ]);
-      }
+    } else {
+      Alert.alert(Strings.location, Strings.PermissionAlertActiveOrder, [
+        {
+          text: Strings.Ok,
+          onPress: () => { this.checkPermission(); },
+        }, { text: Strings.Cancel, onPress: () => { } },
+      ]);
+    }
   };
 
   getProviderData = () => {
@@ -257,16 +297,20 @@ class Main extends Component {
   };
 
   AlertRequestPermission = () => {
+
     if (Platform.OS == 'android') {
       Permissions.check('android.permission.ACCESS_FINE_LOCATION').then(
         (response) => {
           if (response != 'granted') {
             Alert.alert(Strings.location, Strings.PermissionAlert, [
-            {
-              text: Strings.Ok,
-              onPress: () => {this.checkPermission(); },
-            },{ text: Strings.Cancel, onPress: () => { } },
-          ]);}
+              {
+                text: Strings.Ok,
+                onPress: () => { this.checkPermission(); },
+              }, { text: Strings.Cancel, onPress: () => { } },
+            ]);
+          } else {
+            this.setState({ allowLocation: true })
+          }
         },
       );
     } else {
@@ -275,9 +319,11 @@ class Main extends Component {
           Alert.alert(Strings.location, Strings.PermissionAlert, [
             {
               text: Strings.Ok,
-              onPress: () => {this.checkPermission(); },
-            },{ text: Strings.Cancel, onPress: () => { } },
+              onPress: () => { this.checkPermission(); },
+            }, { text: Strings.Cancel, onPress: () => { } },
           ]);
+        } else {
+          this.setState({ allowLocation: true })
         }
       });
     }
@@ -419,7 +465,7 @@ class Main extends Component {
     }).then(data => {
       if (data.result == 1) {
         if (data.Order.ID) {
-          console.log("qweqwe")
+
         }
       }
     })
@@ -433,27 +479,24 @@ class Main extends Component {
     firstTime = true;
     AppState.addEventListener('change', this._handleAppStateChange);
     this.AlertRequestPermission();
-    // __DEV__&&alert(this.props.hasOrder);
+    //  __DEV__&&alert(this.props.hasOrder);
     let orders = await ks.GetDriverOrders({
       DriverID: this.props.user.ID,
       PageNumber: 1,
       Pagesize: 1,
       langID: Strings.langID,
     });
-    try {
-      console.log("asdasdasd", JSON.stringify(orders))
-    } catch (error) {
-      __DEV__ && alert('');
-      console.log("###########", error)
-    }
+    this.setupNotification();
+
     let reloaded = false;
+    // console.log(JSON.stringify(orders));
     if (
       this.props.hasOrder ||
       (orders &&
         orders.orders &&
         orders.orders[0] &&
         orders.orders[0].Status > 0 &&
-        orders.orders[0].Status <= 6)
+        orders.orders[0].Status <= 7)
     ) {
       if (!this.props.hasOrder) {
         reloaded = true;
@@ -545,7 +588,49 @@ class Main extends Component {
         }
       } else {
         this.props.RemoveOrder();
+        this.setState(
+          {
+            hasOrder: false,
+            orderStatus: null,
+            markerShown: false,
+            markerPosition: null,
+          },
+          () => {
+            this.refs.map.animateToRegion(
+              {
+                latitude: this.state.driverLocation.latitude,
+                longitude: this.state.driverLocation.longitude,
+                longitudeDelta: 0.009,
+                latitudeDelta: 0.009,
+              },
+              2000,
+            );
+          },
+        );
       }
+    } else {
+      this.props.RemoveOrder();
+      this.setState(
+        {
+          hasOrder: false,
+          orderStatus: null,
+          markerShown: false,
+          markerPosition: null,
+        },
+        () => {
+          this.refs.map.animateToRegion(
+            {
+              latitude: this.state.driverLocation.latitude,
+              longitude: this.state.driverLocation.longitude,
+              longitudeDelta: 0.009,
+              latitudeDelta: 0.009,
+            },
+            2000,
+          );
+        },
+      );
+      this.props.RemoveOrder();
+      this.props.hasOrder = false;
     }
   };
 
@@ -585,6 +670,7 @@ class Main extends Component {
       lat: this.state.driverLocation.latitude,
       lng: this.state.driverLocation.longitude,
     });
+
     return data;
   };
 
@@ -597,7 +683,7 @@ class Main extends Component {
           BackgroundTimer.stopBackgroundTimer();
           BackgroundGeolocation.removeListeners();
         }
-        console.log();
+
         //code that will be called every 10 seconds
         if (this.state.hasOrder && this.props.order) {
           let [provider, order] = await Promise.all([
@@ -678,7 +764,7 @@ class Main extends Component {
                 backgroundColor: Colors.DarkTextColor,
                 position: 'absolute',
                 alignSelf: 'center',
-               marginTop:-1,
+                marginTop: -1,
                 justifyContent: 'center'
               }}>
               <Text
@@ -686,9 +772,9 @@ class Main extends Component {
                   color: '#fff',
                   fontSize: 20,
                   flex: 1,
-                  textAlignVertical:'center',
+                  textAlignVertical: 'center',
                   alignSelf: 'center',
-                  fontWeight:'bold'
+                  fontWeight: 'bold'
                 }}
               >
                 {Strings.OrderNumber}
@@ -738,19 +824,7 @@ class Main extends Component {
                     if (data.result) {
                       let updatedStatus = await this.getUpdatedOrderStatus();
                       this.props.UpdateOrderStatus(updatedStatus.status);
-                      // console.log('#############')
-                      // console.log("location s" ,
-                      //       JSON.stringify(this.props.order.OrderAddress)
-                      //        + "   loc 2  " + 
-                      //        JSON.stringify(this.props.order.OrderAddress)
-
-                      //        );
-                      // console.log('#############222222222')
-                      // console.log("location s" , 
-                      // JSON.stringify( this.props.order)
-                      //        + "  loc2   " + 
-                      //        JSON.stringify(  this.props.order)
-                      //        );
+                     
                       this.setState(
 
                         {
@@ -936,6 +1010,7 @@ class Main extends Component {
           }
           ButtonColor={this.props.isActive ? 'gray' : Colors.primary}
           onPress={() => {
+            console.log(this.state.allowLocation)
             if (this.state.allowLocation) {
               this.props.ChangeDriverStatus(!this.props.isActive, () => {
                 this.changeDriverStatus();
@@ -977,6 +1052,17 @@ class Main extends Component {
           }}
           onOpened={() => {
             this.setState({ allowNewRequests: false });
+            // console.log("Notification" , JSON.stringify(notificationOpen))
+
+            try {
+              // play the file tone.mp3
+              // SoundPlayer.playSoundFile('notification', 'mp3')
+              // console.log(`cannot play qweqweqwe sound file`)
+              // or play from url
+              //  SoundPlayer.playUrl('https://example.com/music.mp3')
+            } catch (e) {
+              console.log(`cannot play the sound file`, e)
+            }
           }}
           position="bottom">
           <View style={styles.modalContent}>
@@ -1005,9 +1091,24 @@ class Main extends Component {
             <Text style={styles.subtitle}>
               {this.state.notificationData?.UserAddress.Address1}
             </Text>
+            <Text style={styles.subtitle}>
+              {"Distance " +this.state.notificationData?.Distance+ "KM"}
+            </Text>
+            <Text style={styles.subtitle}>
+              {"Total " +this.state.notificationData?.Shipping + "SAR" }
+            </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <TouchableOpacity
                 onPress={() => {
+                  try {
+              // play the file tone.mp3
+               SoundPlayer.playSoundFile('Silent', 'mp3')
+              // console.log(`cannot play qweqweqwe sound file`)
+              // or play from url
+              //  SoundPlayer.playUrl('https://example.com/music.mp3')
+            } catch (e) {
+              console.log(`cannot play the sound file`, e)
+            }
                   ks.ProviderRejectRequest({
                     ProviderID: this.props.user.ID,
                     OrderID: this.state.notificationData?.OrderID,
@@ -1021,10 +1122,8 @@ class Main extends Component {
                             {
                               latitude: this.state.driverLocation.latitude,
                               longitude: this.state.driverLocation.longitude,
-                              longitudeDelta: this.state.driverLocation
-                                .latitudeDelta,
-                              latitudeDelta: this.state.driverLocation
-                                .longitudeDelta,
+                              longitudeDelta: this.state.driverLocation.latitudeDelta,
+                              latitudeDelta: this.state.driverLocation.longitudeDelta,
                             },
                             2000,
                           );
@@ -1038,6 +1137,13 @@ class Main extends Component {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
+                  try {
+              // play the file tone.mp3
+               SoundPlayer.playSoundFile('Silent', 'mp3')
+              // console.log(`cannot play qweqweqwe sound file`)
+              // or play from url
+              //  SoundPlayer.playUrl('https://example.com/music.mp3')
+            } catch (e) {}
                   let userAddress = JSON.parse(
                     this.state.notificationData.UserAddress,
                   );
