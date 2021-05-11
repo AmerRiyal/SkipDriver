@@ -1100,15 +1100,7 @@ class Main extends Component {
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <TouchableOpacity
                 onPress={() => {
-                  try {
-              // play the file tone.mp3
-               SoundPlayer.playSoundFile('Silent', 'mp3')
-              // console.log(`cannot play qweqweqwe sound file`)
-              // or play from url
-              //  SoundPlayer.playUrl('https://example.com/music.mp3')
-            } catch (e) {
-              console.log(`cannot play the sound file`, e)
-            }
+                
                   ks.ProviderRejectRequest({
                     ProviderID: this.props.user.ID,
                     OrderID: this.state.notificationData?.OrderID,
@@ -1137,13 +1129,7 @@ class Main extends Component {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  try {
-              // play the file tone.mp3
-               SoundPlayer.playSoundFile('Silent', 'mp3')
-              // console.log(`cannot play qweqweqwe sound file`)
-              // or play from url
-              //  SoundPlayer.playUrl('https://example.com/music.mp3')
-            } catch (e) {}
+         
                   let userAddress = JSON.parse(
                     this.state.notificationData.UserAddress,
                   );
