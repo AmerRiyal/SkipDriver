@@ -19,15 +19,16 @@ export default class AppButton extends Component {
         ]}
         onPress={this.props.onPress}
         disabled={this.props.disabled}>
+        
+        <Text style={AppStyles.ButtonTextStyle}>{this.props.ButtonText}</Text>
         {this.props.ContainIcon && (
-          <AppIcon
+          <View><AppIcon
             type={this.props.IconType}
             name={this.props.IconName}
             size={Sizes.IconSizes}
-            color={'#fff'}
-          />
+            color={this.props.VColor? this.props.VColor : '#fff'}
+          /></View>
         )}
-        <Text style={AppStyles.ButtonTextStyle}>{this.props.ButtonText}</Text>
       </TouchableOpacity>
     );
   }

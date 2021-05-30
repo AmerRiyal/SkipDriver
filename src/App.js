@@ -14,6 +14,8 @@ import {compose, createStore} from 'redux';
 import reducers from '@redux';
 import {persistStore, persistReducer} from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import messaging from '@react-native-firebase/messaging';
+
 
 const styles = StyleSheet.create({
   container: {
