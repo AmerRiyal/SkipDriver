@@ -1,5 +1,6 @@
-import React, { Component, Fragment } from 'react';
-import SoundPlayer from 'react-native-sound-player'
+import React, {Component, Fragment} from 'react';
+import SoundPlayer from 'react-native-sound-player';
+import DeviceInfo from 'react-native-device-info';
 
 import {
   View,
@@ -13,23 +14,24 @@ import {
   Switch,
   AppState,
   Alert,
+  SafeAreaView,
   Platform,
 } from 'react-native';
-import Permissions, { PERMISSIONS, check } from 'react-native-permissions';
+import Permissions, {PERMISSIONS, check} from 'react-native-permissions';
 import Geolocation from 'react-native-geolocation-service';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 
-import { connect } from 'react-redux';
-import { AppStyles, Sizes, Images, Strings, Colors } from '@styles';
+import {connect} from 'react-redux';
+import {AppStyles, Sizes, Images, Strings, Colors} from '@styles';
 import Constants from '../../styles/Constants';
-import { AppButton, AppLogo, AppIcon } from '@atoms';
+import {AppButton, AppLogo, AppIcon} from '@atoms';
 import ks from '@services/KSAPI';
 import BackgroundTimer from 'react-native-background-timer';
 import messaging from '@react-native-firebase/messaging';
 import ModalBox from 'react-native-modalbox';
 import BackgroundGeolocation from 'react-native-background-geolocation';
 import getDirections from 'react-native-google-maps-directions';
-import { NavigationEvents } from 'react-navigation';
+import {NavigationEvents} from 'react-navigation';
 
 let firstTime = true;
 const serviceCallDelay = 60;
@@ -53,7 +55,7 @@ class Main extends Component {
       active: true,
       allowLocation: false,
       markerShown: false,
-      marginBottom: 20
+      marginBottom: 20,
     };
   }
 
@@ -65,10 +67,10 @@ class Main extends Component {
     let destinations = userAddress.Latitude + ',' + userAddress.Longitude;
     fetch(
       'https://maps.googleapis.com/maps/api/distancematrix/json?origins=' +
-      origins +
-      '&destinations=' +
-      destinations +
-      '&key=AIzaSyCxuTDkt1YtNrx8sOhK-rI_3fUD117_3Xk',
+        origins +
+        '&destinations=' +
+        destinations +
+        '&key=AIzaSyCxuTDkt1YtNrx8sOhK-rI_3fUD117_3Xk',
     )
       .then((responseJson) => responseJson.json())
       .then((response) => {
@@ -81,9 +83,7 @@ class Main extends Component {
             OrderID: this.state.notificationData?.OrderID,
             DeliveryTime: time,
           }).then((data) => {
-
             if (data.result) {
-
               this.refs.modalbox.close();
               let myorder = data.Order;
               myorder.VendorLat = this.state.notificationData?.VendorLat;
@@ -104,7 +104,7 @@ class Main extends Component {
           });
         }
       })
-      .catch((reason) => { });
+      .catch((reason) => {});
   };
 
   handleServiceNotification = (data, _this) => {
@@ -129,11 +129,11 @@ class Main extends Component {
     );
     try {
       // play the file tone.mp3
-      SoundPlayer.playSoundFile('notification', 'mp3')
+      SoundPlayer.playSoundFile('notification', 'mp3');
       // or play from url
       //  SoundPlayer.playUrl('https://example.com/music.mp3')
     } catch (e) {
-      console.log(`cannot play the sound file`, e)
+      console.log(`cannot play the sound file`, e);
     }
     // Geocoder.from({
     //   lat: data.lat,
@@ -148,37 +148,34 @@ class Main extends Component {
     //   .catch((error) => console.warn(error));
 
     setTimeout(() => {
-      this.setState({ notificationData: data }, () => this.refs.modalbox.open())
-
+      this.setState({notificationData: data}, () => this.refs.modalbox.open());
     }, 1000);
   };
 
   setupNotification() {
     const _this = this;
-    this.removeNotificationOpenedListener = messaging().onNotificationOpenedApp(async (remoteMessage) => {
-      // Get the action triggered by the notification being opened
-      //const action = notificationOpen.action;
-      // Get information about the notification that was opened
-      if (remoteMessage) {
-        SoundPlayer.playSoundFile('notification', 'mp3')
+    this.removeNotificationOpenedListener = messaging().onNotificationOpenedApp(
+      async (remoteMessage) => {
+        // Get the action triggered by the notification being opened
+        //const action = notificationOpen.action;
+        // Get information about the notification that was opened
+        if (remoteMessage) {
+          SoundPlayer.playSoundFile('notification', 'mp3');
 
-        const notificationOpen = remoteMessage;
-        if (notificationOpen.data && this.state.allowNewRequests) {
-          this.handleServiceNotification(notificationOpen.data, _this);
+          const notificationOpen = remoteMessage;
+          if (notificationOpen.data && this.state.allowNewRequests) {
+            this.handleServiceNotification(notificationOpen.data, _this);
+          }
         }
-      }
-    });
+      },
+    );
 
     //App closed in background
     messaging()
       .getInitialNotification()
       .then((remoteMessage) => {
-
-
-
         if (remoteMessage) {
-
-          SoundPlayer.playSoundFile('notification', 'mp3')
+          SoundPlayer.playSoundFile('notification', 'mp3');
 
           // App was opened by a notification
           // Get the action triggered by the notification being opened
@@ -194,8 +191,6 @@ class Main extends Component {
       });
     messaging().setBackgroundMessageHandler(async (remoteMessage) => {
       if (remoteMessage) {
-
-
         // App was opened by a notification
         // Get the action triggered by the notification being opened
         //const action = notificationOpen.action;
@@ -205,13 +200,14 @@ class Main extends Component {
         if (notificationOpen.data && this.state.allowNewRequests) {
           this.handleServiceNotification(notificationOpen.data, _this);
         }
-      } try {
+      }
+      try {
         // play the file tone.mp3
         // SoundPlayer.playSoundFile('notification', 'mp3')
         // or play from url
         //  SoundPlayer.playUrl('https://example.com/music.mp3')
       } catch (e) {
-        console.log(`cannot play the sound file`, e)
+        console.log(`cannot play the sound file`, e);
       }
     });
 
@@ -220,34 +216,34 @@ class Main extends Component {
 
       try {
         // play the file tone.mp3
-        SoundPlayer.playSoundFile('notification', 'mp3')
+        SoundPlayer.playSoundFile('notification', 'mp3');
         // or play from url
         //  SoundPlayer.playUrl('https://example.com/music.mp3')
       } catch (e) {
-        console.log(`cannot play the sound file`, e)
+        console.log(`cannot play the sound file`, e);
       }
 
-
       if (remoteMessage) {
-
         if (remoteMessage.data && this.state.allowNewRequests) {
           this.handleServiceNotification(notificationOpen.data, _this);
         }
       }
-
     });
   }
 
   handleRejectedLocation = () => {
     if (!this.props.hasOrder) {
       BackgroundTimer.stopBackgroundTimer();
-      this.setState({ allowLocation: false, active: false });
+      this.setState({allowLocation: false, active: false});
     } else {
       Alert.alert(Strings.location, Strings.PermissionAlertActiveOrder, [
         {
           text: Strings.Ok,
-          onPress: () => { this.checkPermission(); },
-        }, { text: Strings.Cancel, onPress: () => { } },
+          onPress: () => {
+            this.checkPermission();
+          },
+        },
+        {text: Strings.Cancel, onPress: () => {}},
       ]);
     }
   };
@@ -277,7 +273,7 @@ class Main extends Component {
           latitudeDelta: 0.009,
           longitudeDelta: 0.009,
         };
-        this.setState({ driverLocation: region }, () => {
+        this.setState({driverLocation: region}, () => {
           if (firstTime) {
             firstTime = false;
             this.refs.map.animateToRegion(
@@ -296,12 +292,11 @@ class Main extends Component {
       (error) => {
         this.handleRejectedLocation();
       },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
   };
 
   AlertRequestPermission = () => {
-
     if (Platform.OS == 'android') {
       Permissions.check('android.permission.ACCESS_FINE_LOCATION').then(
         (response) => {
@@ -309,11 +304,14 @@ class Main extends Component {
             Alert.alert(Strings.location, Strings.PermissionAlert, [
               {
                 text: Strings.Ok,
-                onPress: () => { this.checkPermission(); },
-              }, { text: Strings.Cancel, onPress: () => { } },
+                onPress: () => {
+                  this.checkPermission();
+                },
+              },
+              {text: Strings.Cancel, onPress: () => {}},
             ]);
           } else {
-            this.setState({ allowLocation: true })
+            this.setState({allowLocation: true});
           }
         },
       );
@@ -323,11 +321,14 @@ class Main extends Component {
           Alert.alert(Strings.location, Strings.PermissionAlert, [
             {
               text: Strings.Ok,
-              onPress: () => { this.checkPermission(); },
-            }, { text: Strings.Cancel, onPress: () => { } },
+              onPress: () => {
+                this.checkPermission();
+              },
+            },
+            {text: Strings.Cancel, onPress: () => {}},
           ]);
         } else {
-          this.setState({ allowLocation: true })
+          this.setState({allowLocation: true});
         }
       });
     }
@@ -341,7 +342,7 @@ class Main extends Component {
             Permissions.request('android.permission.ACCESS_FINE_LOCATION')
               .then((value) => {
                 if (value == 'granted') {
-                  this.setState({ allowLocation: true }, () => {
+                  this.setState({allowLocation: true}, () => {
                     this.watchPosition();
                     this.activeBackgroundLocation();
                   });
@@ -353,7 +354,7 @@ class Main extends Component {
                 this.handleRejectedLocation();
               });
           } else if (response == 'granted') {
-            this.setState({ allowLocation: true }, () => {
+            this.setState({allowLocation: true}, () => {
               this.watchPosition();
               this.activeBackgroundLocation();
             });
@@ -372,14 +373,14 @@ class Main extends Component {
                 Linking.openURL('app-settings://');
               },
             },
-            { text: Strings.Cancel, onPress: () => { } },
+            {text: Strings.Cancel, onPress: () => {}},
           ]);
         }
         if (response != 'granted') {
           Permissions.request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
             .then((value) => {
               if (value == 'granted') {
-                this.setState({ allowLocation: true }, () => {
+                this.setState({allowLocation: true}, () => {
                   this.watchPosition();
                   this.activeBackgroundLocation();
                 });
@@ -390,7 +391,7 @@ class Main extends Component {
               this.handleRejectedLocation();
             });
         } else if (response == 'granted') {
-          this.setState({ allowLocation: true }, () => {
+          this.setState({allowLocation: true}, () => {
             this.watchPosition();
             this.activeBackgroundLocation();
           });
@@ -448,36 +449,37 @@ class Main extends Component {
     );
   };
 
-
   serviceTimer = () => {
     this.myInterval = setInterval(() => {
-      this.setState(prevState => ({
-        Timer: prevState.Timer - 1
-      }))
+      this.setState((prevState) => ({
+        Timer: prevState.Timer - 1,
+      }));
 
       if (this.state.Timer <= 1) {
-        this.setState({ Timer: serviceCallDelay })
+        this.setState({Timer: serviceCallDelay});
         this.recallAPI();
       }
-
-    }, 1000)
-  }
+    }, 1000);
+  };
 
   recallAPI = () => {
+    let ordercheck = this.getUpdatedOrderStatus();
+    if (this.state.orderStatus != ordercheck.status) {
+      // this.setState({orderStatus: ordercheck.status});
+    } else {
+      alert('omar');
+    }
     ks.DriverCheckOrder({
-      ProviderID: this.props.user.ID
-    }).then(data => {
+      ProviderID: this.props.user.ID,
+    }).then((data) => {
       if (data.result == 1) {
         if (data.Order.ID) {
-
         }
       }
-    })
-  }
-
+    });
+  };
 
   componentDidMount = async () => {
-
     this.serviceTimer(); // this service to call service every 60 seconds
 
     firstTime = true;
@@ -527,7 +529,6 @@ class Main extends Component {
           markerShown: true,
           hasOrder: true,
           orderStatus: orders.orders[0].Status,
-
         });
       }
       let order = await this.getUpdatedOrderStatus();
@@ -652,7 +653,7 @@ class Main extends Component {
     ) {
       this.AlertRequestPermission();
     }
-    this.setState({ appState: nextAppState });
+    this.setState({appState: nextAppState});
   };
 
   getUpdatedOrderStatus = async () => {
@@ -665,8 +666,8 @@ class Main extends Component {
     } catch (error) {
       orderStatus = null;
     }
+    this.setState({orderStatus: orderStatus.status});
     return orderStatus;
-
   };
   updateProviderInfo = async () => {
     let data = await ks.ProviderActive({
@@ -752,55 +753,55 @@ class Main extends Component {
   };
 
   renderOrderSteps = () => {
-    { console.log(JSON.stringify(this.state.orderStatus)) }
+    {
+      console.log(JSON.stringify(this.state.orderStatus));
+    }
 
     switch (this.state.orderStatus) {
-      case 0:
-        {
-          this.props.RemoveOrder();
-          this.setState(
-            {
-              hasOrder: false,
-              orderStatus: null,
-              markerShown: false,
-              markerPosition: null,
-            },
-            () => {
-              this.refs.map.animateToRegion(
-                {
-                  latitude: this.state.driverLocation.latitude,
-                  longitude: this.state.driverLocation.longitude,
-                  longitudeDelta: 0.009,
-                  latitudeDelta: 0.009,
-                },
-                2000,
-              );
-            },
-          );
-        }
-      case 9:
-        {
-          this.props.RemoveOrder();
-          this.setState(
-            {
-              hasOrder: false,
-              orderStatus: null,
-              markerShown: false,
-              markerPosition: null,
-            },
-            () => {
-              this.refs.map.animateToRegion(
-                {
-                  latitude: this.state.driverLocation.latitude,
-                  longitude: this.state.driverLocation.longitude,
-                  longitudeDelta: 0.009,
-                  latitudeDelta: 0.009,
-                },
-                2000,
-              );
-            },
-          );
-        }
+      case 0: {
+        this.props.RemoveOrder();
+        this.setState(
+          {
+            hasOrder: false,
+            orderStatus: null,
+            markerShown: false,
+            markerPosition: null,
+          },
+          () => {
+            this.refs.map.animateToRegion(
+              {
+                latitude: this.state.driverLocation.latitude,
+                longitude: this.state.driverLocation.longitude,
+                longitudeDelta: 0.009,
+                latitudeDelta: 0.009,
+              },
+              2000,
+            );
+          },
+        );
+      }
+      case 9: {
+        this.props.RemoveOrder();
+        this.setState(
+          {
+            hasOrder: false,
+            orderStatus: null,
+            markerShown: false,
+            markerPosition: null,
+          },
+          () => {
+            this.refs.map.animateToRegion(
+              {
+                latitude: this.state.driverLocation.latitude,
+                longitude: this.state.driverLocation.longitude,
+                longitudeDelta: 0.009,
+                latitudeDelta: 0.009,
+              },
+              2000,
+            );
+          },
+        );
+      }
       case Constants.OrderStatus.New:
       case Constants.OrderStatus.Accepted:
       case Constants.OrderStatus.Preparing:
@@ -818,7 +819,7 @@ class Main extends Component {
                 position: 'absolute',
                 alignSelf: 'center',
                 marginTop: -1,
-                justifyContent: 'center'
+                justifyContent: 'center',
               }}>
               <Text
                 style={{
@@ -827,12 +828,10 @@ class Main extends Component {
                   flex: 1,
                   textAlignVertical: 'center',
                   alignSelf: 'center',
-                  fontWeight: 'bold'
-                }}
-              >
+                  fontWeight: 'bold',
+                }}>
                 {Strings.OrderNumber}
                 {this.props.order?.OrderID}
-
               </Text>
             </View>
 
@@ -857,13 +856,13 @@ class Main extends Component {
                   width: '100%',
                   opacity:
                     this.props.orderStatus ==
-                      Constants.OrderStatus.PendingDelivery
+                    Constants.OrderStatus.PendingDelivery
                       ? 1
                       : 0.5,
                 }}
                 disabled={
                   !(
-                    this.props.orderStatus ==
+                    this.state.orderStatus ==
                     Constants.OrderStatus.PendingDelivery
                   )
                 }
@@ -879,7 +878,6 @@ class Main extends Component {
                       this.props.UpdateOrderStatus(updatedStatus.status);
 
                       this.setState(
-
                         {
                           markerPosition: {
                             latitude: parseFloat(
@@ -960,7 +958,7 @@ class Main extends Component {
                 </Text>
               </View>
             </View>
-            <View style={{ flexDirection: 'row', width: '100%' }}>
+            <View style={{flexDirection: 'row', width: '100%'}}>
               <TouchableOpacity
                 style={styles.userDataView}
                 onPress={() => {
@@ -981,7 +979,7 @@ class Main extends Component {
                 }}
                 style={[
                   styles.userDataView,
-                  { borderRightWidth: 0, paddingTop: 13 },
+                  {borderRightWidth: 0, paddingTop: 13},
                 ]}>
                 <AppIcon
                   type={'SimpleLineIcons'}
@@ -1005,7 +1003,7 @@ class Main extends Component {
                     OrderID: this.props.order?.OrderID,
                     Status: Constants.OrderStatus.Completed,
                   }).then((data) => {
-                    console.log("asd", JSON.stringify(data))
+                    console.log('asd', JSON.stringify(data));
                     if (data.result) {
                       this.props.RemoveOrder();
                       this.setState(
@@ -1066,10 +1064,10 @@ class Main extends Component {
             bottom: 20,
             zIndex: 1,
             backgroundColor: 'rgba(0,0,0,0.5)',
-
           }}>
-          <TouchableOpacity onPress={() => {
-              console.log(this.state.allowLocation)
+          <TouchableOpacity
+            onPress={() => {
+              console.log(this.state.allowLocation);
               if (this.state.allowLocation) {
                 this.props.ChangeDriverStatus(!this.props.isActive, () => {
                   this.changeDriverStatus();
@@ -1078,13 +1076,21 @@ class Main extends Component {
                 this.AlertRequestPermission();
               }
             }}>
-          <Text style={{ color: this.props.isActive ? '#fff' : '#f00', right: 15, fontSize: 20 }}>{Strings.becomeActive}</Text></TouchableOpacity>
+            <Text
+              style={{
+                color: this.props.isActive ? '#fff' : '#f00',
+                right: 15,
+                fontSize: 20,
+              }}>
+              {Strings.becomeActive}
+            </Text>
+          </TouchableOpacity>
           <Switch
-            trackColor={{ false: "#fff", true: Colors.primary }}
-            thumbColor={this.props.isActive ? "#fff" : "#f00"}
+            trackColor={{false: '#fff', true: Colors.primary}}
+            thumbColor={this.props.isActive ? '#fff' : '#f00'}
             ios_backgroundColor="#3e3e3e"
             onValueChange={() => {
-              console.log(this.state.allowLocation)
+              console.log(this.state.allowLocation);
               if (this.state.allowLocation) {
                 this.props.ChangeDriverStatus(!this.props.isActive, () => {
                   this.changeDriverStatus();
@@ -1095,8 +1101,9 @@ class Main extends Component {
             }}
             value={this.props.isActive}
           />
-          <TouchableOpacity onPress={() => {
-              console.log(this.state.allowLocation)
+          <TouchableOpacity
+            onPress={() => {
+              console.log(this.state.allowLocation);
               if (this.state.allowLocation) {
                 this.props.ChangeDriverStatus(!this.props.isActive, () => {
                   this.changeDriverStatus();
@@ -1105,8 +1112,15 @@ class Main extends Component {
                 this.AlertRequestPermission();
               }
             }}>
-          <Text style={{ color: this.props.isActive ? Colors.primary : '#fff', left: 15, fontSize: 20 }}>{Strings.becomeInActive}</Text>
-</TouchableOpacity>
+            <Text
+              style={{
+                color: this.props.isActive ? Colors.primary : '#fff',
+                left: 15,
+                fontSize: 20,
+              }}>
+              {Strings.becomeInActive}
+            </Text>
+          </TouchableOpacity>
         </View>
         // <AppButton
         //   ExtraStyle={{
@@ -1138,23 +1152,30 @@ class Main extends Component {
   };
 
   render() {
-    return (
-      <View style={{ flex: 1, width: '100%' }}>
+    {
+      //  alert(DeviceInfo.hasNotch() + '');
+    }
 
+    return (
+      <View
+        style={[
+          {flex: 1},
+          {width: '100%'},
+          DeviceInfo.hasNotch() ? {marginTop: 35} : null,
+        ]}>
         <MapView
           ref={'map'}
           initialRegion={this.state.driverLocation}
           provider={PROVIDER_GOOGLE} // remove if not using Google Maps
-          style={[styles.map, { marginBottom: this.state.marginBottom }]}
+          style={[styles.map, {marginBottom: this.state.marginBottom}]}
           loadingEnabled
           followsUserLocation
-          onMapReady={() => this.setState({ marginBottom: 0 })}
+          onMapReady={() => this.setState({marginBottom: 0})}
           showsMyLocationButton={true}
           showsUserLocation>
           {this.state.markerPosition && this.state.markerShown && (
             <MapView.Marker coordinate={this.state.markerPosition} />
           )}
-
         </MapView>
 
         {this.renderContent()}
@@ -1166,10 +1187,10 @@ class Main extends Component {
           backdropPressToClose={false}
           swipeToClose={false}
           onClosed={() => {
-            this.setState({ allowNewRequests: true });
+            this.setState({allowNewRequests: true});
           }}
           onOpened={() => {
-            this.setState({ allowNewRequests: false });
+            this.setState({allowNewRequests: false});
             // console.log("Notification" , JSON.stringify(notificationOpen))
 
             try {
@@ -1179,12 +1200,12 @@ class Main extends Component {
               // or play from url
               //  SoundPlayer.playUrl('https://example.com/music.mp3')
             } catch (e) {
-              console.log(`cannot play the sound file`, e)
+              console.log(`cannot play the sound file`, e);
             }
           }}
           position="bottom">
           <View style={styles.modalContent}>
-            <Text style={[styles.title, { marginBottom: 0 }]}>
+            <Text style={[styles.title, {marginBottom: 0}]}>
               {Strings.newRequest}
             </Text>
             <Image
@@ -1210,15 +1231,14 @@ class Main extends Component {
               {this.state.notificationData?.UserAddress.Address1}
             </Text>
             <Text style={styles.subtitle}>
-              {"Distance " + this.state.notificationData?.Distance + "KM"}
+              {'Distance ' + this.state.notificationData?.Distance + 'KM'}
             </Text>
             <Text style={styles.subtitle}>
-              {"Total " + this.state.notificationData?.Shipping + "SAR"}
+              {'Total ' + this.state.notificationData?.Shipping + 'SAR'}
             </Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <TouchableOpacity
                 onPress={() => {
-
                   ks.ProviderRejectRequest({
                     ProviderID: this.props.user.ID,
                     OrderID: this.state.notificationData?.OrderID,
@@ -1226,53 +1246,53 @@ class Main extends Component {
                     if (data.result) {
                       this.refs.modalbox.close();
                       this.setState(
-                        { markerPosition: null, markerShown: false },
+                        {markerPosition: null, markerShown: false},
                         () => {
                           this.refs.map.animateToRegion(
                             {
                               latitude: this.state.driverLocation.latitude,
                               longitude: this.state.driverLocation.longitude,
-                              longitudeDelta: this.state.driverLocation.latitudeDelta,
-                              latitudeDelta: this.state.driverLocation.longitudeDelta,
+                              longitudeDelta: this.state.driverLocation
+                                .latitudeDelta,
+                              latitudeDelta: this.state.driverLocation
+                                .longitudeDelta,
                             },
                             2000,
                           );
                         },
                       );
-
-
                     }
                   });
                 }}
-                style={[styles.acceptBut, { backgroundColor: '#DA0000' }]}>
-                <Text style={{ color: '#fff' }}>{Strings.Reject}</Text>
+                style={[styles.acceptBut, {backgroundColor: '#DA0000'}]}>
+                <Text style={{color: '#fff'}}>{Strings.Reject}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-
                   let userAddress = JSON.parse(
                     this.state.notificationData.UserAddress,
                   );
                   this.AcceptNewRequest(userAddress);
-
                 }}
                 style={[
                   styles.acceptBut,
-                  { backgroundColor: Colors.primary, marginLeft: 25 },
+                  {backgroundColor: Colors.primary, marginLeft: 25},
                 ]}>
-                <Text style={{ color: '#fff' }}>{Strings.Accept}</Text>
+                <Text style={{color: '#fff'}}>{Strings.Accept}</Text>
               </TouchableOpacity>
             </View>
           </View>
         </ModalBox>
 
-        <View
-          style={this.props.isActive ? styles.Menu2 : styles.Menu3}
-        >
-          {this.props.isActive ? <Image
-            style={styles.tinyLogo}
-            source={{ uri: 'http://skiptheq.world/wsImages/led_blinksgreen.gif' }}
-          /> : null}
+        <View style={this.props.isActive ? styles.Menu2 : styles.Menu3}>
+          {this.props.isActive ? (
+            <Image
+              style={styles.tinyLogo}
+              source={{
+                uri: 'http://skiptheq.world/wsImages/led_blinksgreen.gif',
+              }}
+            />
+          ) : null}
         </View>
 
         <TouchableOpacity
@@ -1486,7 +1506,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = ({ UserReducer, OrderReducer }) => {
+const mapStateToProps = ({UserReducer, OrderReducer}) => {
   return {
     user: UserReducer.user,
     order: OrderReducer.order,
@@ -1497,7 +1517,7 @@ const mapStateToProps = ({ UserReducer, OrderReducer }) => {
 };
 
 const mapDispatchToProps = (dispatch) => {
-  const { actions } = require('@redux/UserReducer');
+  const {actions} = require('@redux/UserReducer');
   const orderActions = require('@redux/OrderReducer');
 
   return {
