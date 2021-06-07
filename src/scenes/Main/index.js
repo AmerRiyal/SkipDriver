@@ -467,7 +467,6 @@ class Main extends Component {
     if (this.state.orderStatus != ordercheck.status) {
       // this.setState({orderStatus: ordercheck.status});
     } else {
-      alert('omar');
     }
     ks.DriverCheckOrder({
       ProviderID: this.props.user.ID,
@@ -855,7 +854,7 @@ class Main extends Component {
                   marginRight: 15,
                   width: '100%',
                   opacity:
-                    this.props.orderStatus ==
+                  this.state.orderStatus ==
                     Constants.OrderStatus.PendingDelivery
                       ? 1
                       : 0.5,
