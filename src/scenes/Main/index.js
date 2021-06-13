@@ -34,7 +34,7 @@ import getDirections from 'react-native-google-maps-directions';
 import {NavigationEvents} from 'react-navigation';
 
 let firstTime = true;
-const serviceCallDelay = 60;
+const serviceCallDelay = 30;
 
 class Main extends Component {
   constructor(props) {
@@ -58,7 +58,166 @@ class Main extends Component {
       marginBottom: 20,
     };
   }
+  componentDidMount = async () => {
+    this.serviceTimer(); // this service to call service every 60 seconds
 
+    firstTime = true;
+    AppState.addEventListener('change', this._handleAppStateChange);
+    this.AlertRequestPermission();
+    //  __DEV__&&alert(this.props.hasOrder);
+    let orders = await ks.GetDriverOrders({
+      DriverID: this.props.user.ID,
+      PageNumber: 1,
+      Pagesize: 1,
+      langID: Strings.langID,
+    });
+    this.setupNotification();
+
+    let reloaded = false;
+    // console.log(JSON.stringify(orders));
+    if (
+      this.props.hasOrder ||
+      (orders &&
+        orders.orders &&
+        orders.orders[0] &&
+        orders.orders[0].Status > 0 &&
+        orders.orders[0].Status <= 7)
+    ) {
+      if (!this.props.hasOrder) {
+        reloaded = true;
+
+        orders.orders[0].OrderAddress = {
+          Latitude: orders.orders[0].OrderLat,
+          Longitude: orders.orders[0].OrderLng,
+          Label: orders.orders[0].AddressLabel,
+          Address1: orders.orders[0].Address1,
+          Phone1: orders.orders[0].Phone1,
+        };
+        this.props.AddOrder(orders.orders[0]);
+        this.setState({
+          markerPosition: {
+            latitude: parseFloat(orders.orders[0].VendorLat),
+            longitude: parseFloat(orders.orders[0].VendorLng),
+            latitudeDelta: 0.0051,
+            longitudeDelta: 0.0051,
+          },
+          notificationData: {
+            VendorLat: orders.orders[0].VendorLat,
+            VendorLng: orders.orders[0].VendorLng,
+          },
+          markerShown: true,
+          hasOrder: true,
+          orderStatus: orders.orders[0].Status,
+        });
+      }
+      let order = await this.getUpdatedOrderStatus();
+
+      if (
+        order &&
+        order.result &&
+        order.status !== Constants.OrderStatus.Cancelled
+      ) {
+        this.props.ChangeDriverStatus(true, () => {
+          this.setState({
+            hasOrder: true,
+            orderStatus: order.status,
+            active: true,
+          });
+        });
+        this.props.UpdateOrderStatus(order.status);
+        this.changeDriverStatus();
+        if (this.props.order.VendorLat) {
+          if (order.status <= 6) {
+            this.setState((prevState) => ({
+              markerPosition: {
+                latitude: parseFloat(this.props.order.VendorLat),
+                longitude: parseFloat(this.props.order.VendorLng),
+                latitudeDelta: 0.0052,
+                longitudeDelta: 0.0052,
+              },
+              markerShown: true,
+            }));
+
+            this.refs.map.animateToRegion(
+              {
+                latitude: parseFloat(this.props.order.VendorLat) - 0.002,
+                longitude: parseFloat(this.props.order.VendorLng),
+                latitudeDelta: 0.005,
+                longitudeDelta: 0.005,
+              },
+              1000,
+            );
+          } else {
+            this.setState((prevState) => ({
+              markerPosition: {
+                latitude: parseFloat(this.props.order.OrderAddress.Latitude),
+                longitude: parseFloat(this.props.order.OrderAddress.Longitude),
+                latitudeDelta: 0.0053,
+                longitudeDelta: 0.0053,
+              },
+              markerShown: true,
+            }));
+
+            this.refs.map.animateToRegion(
+              {
+                latitude:
+                  parseFloat(this.props.order.OrderAddress.Latitude) - 0.002,
+                longitude: parseFloat(this.props.order.OrderAddress.Longitude),
+                latitudeDelta: 0.005,
+                longitudeDelta: 0.005,
+              },
+              1000,
+            );
+          }
+        }
+      } else {
+        this.props.RemoveOrder();
+        this.setState(
+          {
+            hasOrder: false,
+            orderStatus: null,
+            markerShown: false,
+            markerPosition: null,
+          },
+          () => {
+            this.refs.map.animateToRegion(
+              {
+                latitude: this.state.driverLocation.latitude,
+                longitude: this.state.driverLocation.longitude,
+                longitudeDelta: 0.009,
+                latitudeDelta: 0.009,
+              },
+              2000,
+            );
+          },
+        );
+      }
+    } else {
+      this.props.RemoveOrder();
+      this.setState(
+        {
+          hasOrder: false,
+          orderStatus: null,
+          markerShown: false,
+          markerPosition: null,
+          notificationData: null
+        },
+        () => {
+          this.refs.map.animateToRegion(
+            {
+              latitude: this.state.driverLocation.latitude,
+              longitude: this.state.driverLocation.longitude,
+              longitudeDelta: 0.009,
+              latitudeDelta: 0.009,
+            },
+            2000,
+          );
+        },
+      );
+      this.props.RemoveOrder();
+      this.props.hasOrder = false;
+    }
+  };
   AcceptNewRequest = (userAddress) => {
     let origins =
       this.state.driverLocation.latitude +
@@ -127,14 +286,14 @@ class Main extends Component {
       },
       1000,
     );
-    try {
-      // play the file tone.mp3
-      SoundPlayer.playSoundFile('notification', 'mp3');
-      // or play from url
-      //  SoundPlayer.playUrl('https://example.com/music.mp3')
-    } catch (e) {
-      console.log(`cannot play the sound file`, e);
-    }
+    // try {
+    //   // play the file tone.mp3
+    //   SoundPlayer.playSoundFile('notification', 'mp3');
+    //   // or play from url
+    //   //  SoundPlayer.playUrl('https://example.com/music.mp3')
+    // } catch (e) {
+    //   console.log(`cannot play the sound file`, e);
+    // }
     // Geocoder.from({
     //   lat: data.lat,
     //   lng: data.lng,
@@ -148,8 +307,11 @@ class Main extends Component {
     //   .catch((error) => console.warn(error));
 
     setTimeout(() => {
+      
+      console.log("twotwo",JSON.stringify(this.state.notificationData))
+      console.log("two",JSON.stringify(data))
       this.setState({notificationData: data}, () => this.refs.modalbox.open());
-    }, 1000);
+    }, 5000);
   };
 
   setupNotification() {
@@ -164,7 +326,7 @@ class Main extends Component {
 
           const notificationOpen = remoteMessage;
           if (notificationOpen.data && this.state.allowNewRequests) {
-            this.handleServiceNotification(notificationOpen.data, _this);
+            this.setState({notificationData :remoteMessage.data } ,  this.handleServiceNotification(remoteMessage.data, _this))
           }
         }
       },
@@ -184,7 +346,7 @@ class Main extends Component {
           const notificationOpen = remoteMessage;
           if (notificationOpen.data && this.state.allowNewRequests) {
             if (notificationOpen) {
-              this.handleServiceNotification(notificationOpen.data, _this);
+              this.setState({notificationData :remoteMessage.data } ,  this.handleServiceNotification(remoteMessage.data, _this))
             }
           }
         }
@@ -198,7 +360,7 @@ class Main extends Component {
         const notificationOpen = remoteMessage;
 
         if (notificationOpen.data && this.state.allowNewRequests) {
-          this.handleServiceNotification(notificationOpen.data, _this);
+          this.setState({notificationData :remoteMessage.data } ,  this.handleServiceNotification(remoteMessage.data, _this))
         }
       }
       try {
@@ -225,7 +387,8 @@ class Main extends Component {
 
       if (remoteMessage) {
         if (remoteMessage.data && this.state.allowNewRequests) {
-          this.handleServiceNotification(notificationOpen.data, _this);
+          this.setState({notificationData :remoteMessage.data } ,  this.handleServiceNotification(remoteMessage.data, _this))
+         
         }
       }
     });
@@ -478,165 +641,7 @@ class Main extends Component {
     });
   };
 
-  componentDidMount = async () => {
-    this.serviceTimer(); // this service to call service every 60 seconds
-
-    firstTime = true;
-    AppState.addEventListener('change', this._handleAppStateChange);
-    this.AlertRequestPermission();
-    //  __DEV__&&alert(this.props.hasOrder);
-    let orders = await ks.GetDriverOrders({
-      DriverID: this.props.user.ID,
-      PageNumber: 1,
-      Pagesize: 1,
-      langID: Strings.langID,
-    });
-    this.setupNotification();
-
-    let reloaded = false;
-    // console.log(JSON.stringify(orders));
-    if (
-      this.props.hasOrder ||
-      (orders &&
-        orders.orders &&
-        orders.orders[0] &&
-        orders.orders[0].Status > 0 &&
-        orders.orders[0].Status <= 7)
-    ) {
-      if (!this.props.hasOrder) {
-        reloaded = true;
-
-        orders.orders[0].OrderAddress = {
-          Latitude: orders.orders[0].OrderLat,
-          Longitude: orders.orders[0].OrderLng,
-          Label: orders.orders[0].AddressLabel,
-          Address1: orders.orders[0].Address1,
-          Phone1: orders.orders[0].Phone1,
-        };
-        this.props.AddOrder(orders.orders[0]);
-        this.setState({
-          markerPosition: {
-            latitude: parseFloat(orders.orders[0].VendorLat),
-            longitude: parseFloat(orders.orders[0].VendorLng),
-            latitudeDelta: 0.0051,
-            longitudeDelta: 0.0051,
-          },
-          notificationData: {
-            VendorLat: orders.orders[0].VendorLat,
-            VendorLng: orders.orders[0].VendorLng,
-          },
-          markerShown: true,
-          hasOrder: true,
-          orderStatus: orders.orders[0].Status,
-        });
-      }
-      let order = await this.getUpdatedOrderStatus();
-
-      if (
-        order &&
-        order.result &&
-        order.status !== Constants.OrderStatus.Cancelled
-      ) {
-        this.props.ChangeDriverStatus(true, () => {
-          this.setState({
-            hasOrder: true,
-            orderStatus: order.status,
-            active: true,
-          });
-        });
-        this.props.UpdateOrderStatus(order.status);
-        this.changeDriverStatus();
-        if (this.props.order.VendorLat) {
-          if (order.status <= 6) {
-            this.setState((prevState) => ({
-              markerPosition: {
-                latitude: parseFloat(this.props.order.VendorLat),
-                longitude: parseFloat(this.props.order.VendorLng),
-                latitudeDelta: 0.0052,
-                longitudeDelta: 0.0052,
-              },
-              markerShown: true,
-            }));
-
-            this.refs.map.animateToRegion(
-              {
-                latitude: parseFloat(this.props.order.VendorLat) - 0.002,
-                longitude: parseFloat(this.props.order.VendorLng),
-                latitudeDelta: 0.005,
-                longitudeDelta: 0.005,
-              },
-              1000,
-            );
-          } else {
-            this.setState((prevState) => ({
-              markerPosition: {
-                latitude: parseFloat(this.props.order.OrderAddress.Latitude),
-                longitude: parseFloat(this.props.order.OrderAddress.Longitude),
-                latitudeDelta: 0.0053,
-                longitudeDelta: 0.0053,
-              },
-              markerShown: true,
-            }));
-
-            this.refs.map.animateToRegion(
-              {
-                latitude:
-                  parseFloat(this.props.order.OrderAddress.Latitude) - 0.002,
-                longitude: parseFloat(this.props.order.OrderAddress.Longitude),
-                latitudeDelta: 0.005,
-                longitudeDelta: 0.005,
-              },
-              1000,
-            );
-          }
-        }
-      } else {
-        this.props.RemoveOrder();
-        this.setState(
-          {
-            hasOrder: false,
-            orderStatus: null,
-            markerShown: false,
-            markerPosition: null,
-          },
-          () => {
-            this.refs.map.animateToRegion(
-              {
-                latitude: this.state.driverLocation.latitude,
-                longitude: this.state.driverLocation.longitude,
-                longitudeDelta: 0.009,
-                latitudeDelta: 0.009,
-              },
-              2000,
-            );
-          },
-        );
-      }
-    } else {
-      this.props.RemoveOrder();
-      this.setState(
-        {
-          hasOrder: false,
-          orderStatus: null,
-          markerShown: false,
-          markerPosition: null,
-        },
-        () => {
-          this.refs.map.animateToRegion(
-            {
-              latitude: this.state.driverLocation.latitude,
-              longitude: this.state.driverLocation.longitude,
-              longitudeDelta: 0.009,
-              latitudeDelta: 0.009,
-            },
-            2000,
-          );
-        },
-      );
-      this.props.RemoveOrder();
-      this.props.hasOrder = false;
-    }
-  };
+ 
 
   componentWillUnmount() {
     clearInterval(this.myInterval);
@@ -668,6 +673,7 @@ class Main extends Component {
     this.setState({orderStatus: orderStatus.status});
     return orderStatus;
   };
+
   updateProviderInfo = async () => {
     let data = await ks.ProviderActive({
       providerid: this.props.user.ID,
@@ -704,7 +710,7 @@ class Main extends Component {
         } else {
           this.updateProviderInfo();
         }
-      }, 10000);
+      }, 1000);
     } else {
       console.log('l3');
       BackgroundTimer.stopBackgroundTimer();
@@ -1066,7 +1072,6 @@ class Main extends Component {
           }}>
           <TouchableOpacity
             onPress={() => {
-              console.log(this.state.allowLocation);
               if (this.state.allowLocation) {
                 this.props.ChangeDriverStatus(!this.props.isActive, () => {
                   this.changeDriverStatus();
@@ -1186,11 +1191,11 @@ class Main extends Component {
           backdropPressToClose={false}
           swipeToClose={false}
           onClosed={() => {
-            this.setState({allowNewRequests: true});
+           
           }}
           onOpened={() => {
             this.setState({allowNewRequests: false});
-            // console.log("Notification" , JSON.stringify(notificationOpen))
+             console.log("Notification" , JSON.stringify(this.state.notificationData))
 
             try {
               // play the file tone.mp3
@@ -1243,9 +1248,9 @@ class Main extends Component {
                     OrderID: this.state.notificationData?.OrderID,
                   }).then((data) => {
                     if (data.result) {
-                      this.refs.modalbox.close();
+                     
                       this.setState(
-                        {markerPosition: null, markerShown: false},
+                        {markerPosition: null, markerShown: false ,  allowNewRequests: true , notificationData : null},
                         () => {
                           this.refs.map.animateToRegion(
                             {
@@ -1258,6 +1263,7 @@ class Main extends Component {
                             },
                             2000,
                           );
+                          this.refs.modalbox.close();
                         },
                       );
                     }
@@ -1309,7 +1315,7 @@ class Main extends Component {
 const styles = StyleSheet.create({
   MapContainer: {
     width: '100%',
-    height: Dimensions.get('screen').height * 0.6,
+    height: Dimensions.get('screen').height * 0.6 ,
   },
   tinyLogo: {
     width: 50,
