@@ -87,7 +87,12 @@ class Drawer extends Component {
               });
             }}
           />
-        )}
+        )} 
+        <View style = {{alignItems:'center' , paddingBottom:3}}>
+              <Text style={{color:'#fff'}}>
+                {Strings.Version}
+              </Text>
+            </View>
       </View>
     );
   }
