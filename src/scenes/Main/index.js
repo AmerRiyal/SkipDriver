@@ -70,7 +70,8 @@ class Main extends Component {
       PageNumber: 1,
       Pagesize: 1,
       langID: Strings.langID,
-    });
+    }     
+    );
     this.setupNotification();
 
     let reloaded = false;
@@ -322,7 +323,7 @@ class Main extends Component {
         //const action = notificationOpen.action;
         // Get information about the notification that was opened
         if (remoteMessage) {
-          SoundPlayer.playSoundFile('notification', 'mp3');
+          SoundPlayer.playSoundFile('notification', 'wav');
 
           const notificationOpen = remoteMessage;
           if (notificationOpen.data && this.state.allowNewRequests) {
@@ -337,7 +338,7 @@ class Main extends Component {
       .getInitialNotification()
       .then((remoteMessage) => {
         if (remoteMessage) {
-          SoundPlayer.playSoundFile('notification', 'mp3');
+          SoundPlayer.playSoundFile('notification', 'wav');
 
           // App was opened by a notification
           // Get the action triggered by the notification being opened
@@ -378,7 +379,7 @@ class Main extends Component {
 
       try {
         // play the file tone.mp3
-        SoundPlayer.playSoundFile('notification', 'mp3');
+        SoundPlayer.playSoundFile('notification', 'wav');
         // or play from url
         //  SoundPlayer.playUrl('https://example.com/music.mp3')
       } catch (e) {
@@ -734,10 +735,10 @@ class Main extends Component {
 
   handleGetDirections = () => {
     const data = {
-      source: {
-        latitude: this.state.driverLocation?.latitude,
-        longitude: this.state.driverLocation?.longitude,
-      },
+      // source: {
+      //   latitude: this.state.driverLocation?.latitude,
+      //   longitude: this.state.driverLocation?.longitude,
+      // },
       destination: {
         latitude: this.state.markerPosition?.latitude,
         longitude: this.state.markerPosition?.longitude,
